@@ -105,23 +105,21 @@ class _SetSleepTimeState extends State<SetSleepTime> {
                               itemBuilder: (BuildContext context, int i) {
                                 SleepData sleepData =
                                     sleepDataProvider.getSleepDataList[i];
+                                print('IIIIIIIIIIIIIII: $i');
                                 return Column(
                                   children: [
+                                    i > 0
+                                        ? Divider(
+                                            color: Colors.indigo,
+                                            thickness: 1.5,
+                                          )
+                                        : SizedBox(),
                                     ShowData(
                                       sleepData: sleepData,
                                       fontSize: fontSize,
                                       list: false,
                                       i: i,
                                     ),
-                                    i ==
-                                            sleepDataProvider
-                                                    .getSleepDataList.length -
-                                                2
-                                        ? Divider(
-                                            color: Colors.indigo,
-                                            thickness: 1.5,
-                                          )
-                                        : SizedBox(),
                                   ],
                                 );
                               }),

@@ -57,7 +57,8 @@ class SleepInput {
     }
   }
 
-  static SleepData hoursConverter({@required List<SleepData>? sleepdata}) {
+  static SleepData hoursMinutesConverter(
+      {@required List<SleepData>? sleepdata}) {
     int hours = 0;
     int minutes = 0;
     SleepData sleepInput = SleepData(date: sleepdata?[0].date);
@@ -88,5 +89,45 @@ class SleepInput {
       wokenUp += sleepData[i].wokenUp + ' ';
     }
     return wokenUp;
+  }
+
+  static List hourCalculator(
+      {@required String? fallenAsleep, @required String? wokenUp}) {
+    if (fallenAsleep != '--:--' && wokenUp != '--:--') {
+      int hrsFrom = int.parse(fallenAsleep!.split(':')[0]);
+      int hrsTil = int.parse(wokenUp!.split(':')[0]);
+      int minFrom = int.parse(fallenAsleep.split(':')[1]);
+      int minTil = int.parse(wokenUp.split(':')[1]);
+      int hourSlept = 0;
+      int minSlept = 0;
+      if (hrsFrom > hrsTil) {
+        hourSlept = 24 - hrsFrom + hrsTil;
+        if (minFrom > minTil) {
+          minSlept = 60 - minFrom + minTil;
+          hourSlept = 24 - hrsFrom + hrsTil - 1;
+        } else if (minFrom < minTil) {
+          minSlept = minTil - minFrom;
+        } else {
+          minSlept = 0;
+        }
+      } else if (hrsFrom < hrsTil) {
+        hourSlept = hrsTil - hrsFrom;
+        if (minFrom > minTil) {
+          minSlept = 60 - minFrom + minTil;
+          hourSlept = hrsTil - hrsFrom - 1;
+        } else if (minFrom < minTil) {
+          minSlept = minTil - minFrom;
+        } else {
+          minSlept = 0;
+        }
+      } else {
+        hourSlept = 0;
+        minSlept = minTil - minFrom;
+      }
+      print('SPAVANJE: $hourSlept:$minSlept');
+      return [hourSlept, minSlept];
+    } else {
+      return [fallenAsleep, wokenUp];
+    }
   }
 }

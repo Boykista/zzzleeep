@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:zzzleep/functions/sleepconverter.dart';
 import 'package:zzzleep/models/sleepinput.dart';
 import 'package:zzzleep/parts/timepicker.dart';
+import 'package:zzzleep/providers/sleepdataprovider.dart';
 
 class ShowData extends StatelessWidget {
   const ShowData(
@@ -117,12 +120,23 @@ class Time extends StatelessWidget {
         ],
       );
     } else {
+      var sleepDataProvider = Provider.of<SleepDataProvider>(context);
       return Column(
         children: [
           TextButton(
             onPressed: () {
-              print('AAAAAAAAAAA fallen asleep');
-              TimePicker.chooseTime(context: context, fallenAsleep: true, i: i);
+              TimePicker.chooseTime(context: context, fallenAsleep: true, i: i)
+                  .then((value) {
+                List? hourMinute = SleepInput.hourCalculator(
+                    fallenAsleep:
+                        sleepDataProvider.getSleepDataList[i!].fallenAsleep,
+                    wokenUp: sleepDataProvider.getSleepDataList[i!].wokenUp);
+                if (!hourMinute.contains('--:--')) {
+                  sleepDataProvider.calculateHoursMinutes(
+                      i: i, hours: hourMinute[0], minutes: hourMinute[1]);
+                  sleepDataProvider.prikaziNulu(prikaziNulu: true);
+                }
+              });
             },
             child: Row(
               children: [
@@ -145,7 +159,18 @@ class Time extends StatelessWidget {
           ),
           TextButton(
             onPressed: () {
-              print('AAAAAAAAAAA woken up');
+              TimePicker.chooseTime(context: context, fallenAsleep: false, i: i)
+                  .then((value) {
+                List? hourMinute = SleepInput.hourCalculator(
+                    fallenAsleep:
+                        sleepDataProvider.getSleepDataList[i!].fallenAsleep,
+                    wokenUp: sleepDataProvider.getSleepDataList[i!].wokenUp);
+                if (!hourMinute.contains('--:--')) {
+                  sleepDataProvider.calculateHoursMinutes(
+                      i: i, hours: hourMinute[0], minutes: hourMinute[1]);
+                  sleepDataProvider.prikaziNulu(prikaziNulu: true);
+                }
+              });
             },
             child: Row(
               children: [
@@ -183,6 +208,8 @@ class Hours extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var sleepDataProvider =
+        Provider.of<SleepDataProvider>(context, listen: false);
     return Row(children: [
       const Icon(
         Icons.access_time,
@@ -192,7 +219,15 @@ class Hours extends StatelessWidget {
         width: 15,
       ),
       Text(
-        '${hours == 0 ? '--' : hours}:${minutes == 0 ? '--' : minutes}',
+        sleepDataProvider.getPrikaziNulu
+            ? hours == 0 && minutes! > 0
+                ? '$minutes min'
+                : hours! > 0 && minutes == 0
+                    ? '$hours'
+                    : hours! > 0 && minutes! > 0
+                        ? '$hours:$minutes'
+                        : '--:--'
+            : '--:--',
         style: TextStyle(fontSize: fontSize, color: Colors.white),
       )
     ]);

@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:zzzleep/providers/sleepdataprovider.dart';
 
 class TimePicker {
-  static chooseTime(
+  static Future chooseTime(
       {@required BuildContext? context,
       @required bool? fallenAsleep,
       @required int? i}) async {
@@ -40,7 +40,11 @@ class TimePicker {
       newTime.minute < 10
           ? minute = '0${newTime.minute}'
           : minute = '${newTime.minute}';
-      sleepDataProvider.setFallenAsleep(i: i, fallenAsleep: '$hour:$minute');
+      if (fallenAsleep) {
+        sleepDataProvider.setFallenAsleep(i: i, fallenAsleep: '$hour:$minute');
+      } else {
+        sleepDataProvider.setWokenUp(i: i, wokenUp: '$hour:$minute');
+      }
     } else {
       return;
     }

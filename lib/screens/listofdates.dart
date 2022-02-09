@@ -90,7 +90,8 @@ class _SleepDatesState extends State<SleepDates> {
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
-    var sleepDataProvider = Provider.of<SleepDataProvider>(context);
+    var sleepDataProvider =
+        Provider.of<SleepDataProvider>(context, listen: false);
     return FutureBuilder(
         future: Hive.openBox('sleepdata'),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -114,8 +115,8 @@ class _SleepDatesState extends State<SleepDates> {
                   SleepData sleepInput = SleepData(date: sleepData[0].date);
                   if (sleepInputList.length > 1) {
                     moreThanOneInput = true;
-                    sleepInput =
-                        SleepInput.hoursConverter(sleepdata: sleepInputList);
+                    sleepInput = SleepInput.hoursMinutesConverter(
+                        sleepdata: sleepInputList);
                     sleepInput.fallenAsleep = SleepInput.fallenAsleepConverter(
                         sleepData: sleepInputList);
                     sleepInput.wokenUp =
