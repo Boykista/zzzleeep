@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:zzzleep/models/sleepinput.dart';
+import 'package:zzzleep/parts/timepicker.dart';
 
 class ShowData extends StatelessWidget {
   const ShowData(
@@ -42,19 +43,17 @@ class ShowData extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              TextButton(
-                onPressed: () {},
-                child: Hours(
-                  fontSize: fontSize + 2,
-                  hours: sleepData!.hours,
-                  minutes: sleepData!.minutes,
-                ),
+              Hours(
+                fontSize: fontSize + 2,
+                hours: sleepData!.hours,
+                minutes: sleepData!.minutes,
               ),
               Time(
                 fontSize: fontSize + 2,
                 fallenAsleep: sleepData!.fallenAsleep,
                 wokenUp: sleepData!.wokenUp,
                 list: list,
+                i: i,
               )
             ],
           ));
@@ -69,12 +68,14 @@ class Time extends StatelessWidget {
     @required this.fallenAsleep,
     @required this.wokenUp,
     @required this.list,
+    this.i,
   }) : super(key: key);
 
   final double fontSize;
   final String? fallenAsleep;
   final String? wokenUp;
   final bool? list;
+  final int? i;
   @override
   Widget build(BuildContext context) {
     if (list!) {
@@ -121,6 +122,7 @@ class Time extends StatelessWidget {
           TextButton(
             onPressed: () {
               print('AAAAAAAAAAA fallen asleep');
+              TimePicker.chooseTime(context: context, fallenAsleep: true, i: i);
             },
             child: Row(
               children: [

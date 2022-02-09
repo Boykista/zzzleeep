@@ -17,4 +17,14 @@ class SleepDataProvider with ChangeNotifier {
     _sleepDataList.add(sleepData!);
     notifyListeners();
   }
+
+  void setFallenAsleep({@required int? i, @required String? fallenAsleep}) {
+    _sleepDataList[i!].fallenAsleep = fallenAsleep!;
+    notifyListeners();
+  }
+
+  void setWokenUp({@required int? i, @required String? wokenUp}) {
+    _sleepDataList[i!].wokenUp = wokenUp!;
+    notifyListeners();
+  }
 }

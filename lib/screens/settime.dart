@@ -96,12 +96,6 @@ class _SetSleepTimeState extends State<SetSleepTime> {
                       Container(
                         constraints:
                             BoxConstraints(maxHeight: screenHeight * 0.3),
-                        decoration: BoxDecoration(
-                            border: Border(
-                                bottom: BorderSide(
-                                    color: keyboard > 0
-                                        ? Colors.indigo
-                                        : Colors.transparent))),
                         child: SingleChildScrollView(
                           child: ListView.builder(
                               shrinkWrap: true,
@@ -111,10 +105,24 @@ class _SetSleepTimeState extends State<SetSleepTime> {
                               itemBuilder: (BuildContext context, int i) {
                                 SleepData sleepData =
                                     sleepDataProvider.getSleepDataList[i];
-                                return ShowData(
-                                  sleepData: sleepData,
-                                  fontSize: fontSize,
-                                  list: false,
+                                return Column(
+                                  children: [
+                                    ShowData(
+                                      sleepData: sleepData,
+                                      fontSize: fontSize,
+                                      list: false,
+                                      i: i,
+                                    ),
+                                    i ==
+                                            sleepDataProvider
+                                                    .getSleepDataList.length -
+                                                2
+                                        ? Divider(
+                                            color: Colors.indigo,
+                                            thickness: 1.5,
+                                          )
+                                        : SizedBox(),
+                                  ],
                                 );
                               }),
                         ),
