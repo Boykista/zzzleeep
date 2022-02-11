@@ -10,6 +10,10 @@ class SleepDataProvider with ChangeNotifier {
 
   bool get getPrikaziNulu => _prikaziNulu;
 
+  TextEditingController _notesController = TextEditingController();
+
+  TextEditingController get getNotesController => _notesController;
+
   void setSleepDataList({@required List<SleepData>? sleepData}) {
     _sleepDataList = sleepData!;
     notifyListeners();
@@ -41,4 +45,14 @@ class SleepDataProvider with ChangeNotifier {
     _prikaziNulu = prikaziNulu!;
     notifyListeners();
   }
+
+  void setNotes({@required String? notes}) {
+    _sleepDataList[0].notes = notes!;
+    _notesController.value = _notesController.value.copyWith(text: notes);
+    notifyListeners();
+  }
+
+  // void notesController({@required List<SleepData>? sleepData}) {
+  //   notifyListeners();
+  // }
 }

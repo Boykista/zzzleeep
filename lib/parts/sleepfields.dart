@@ -31,11 +31,14 @@ class ShowData extends StatelessWidget {
               hours: sleepData!.hours,
               minutes: sleepData!.minutes,
             ),
-            Time(
-              fontSize: fontSize,
-              fallenAsleep: sleepData!.fallenAsleep,
-              wokenUp: sleepData!.wokenUp,
-              list: list,
+            Padding(
+              padding: const EdgeInsets.only(left: 15.0),
+              child: Time(
+                fontSize: fontSize,
+                fallenAsleep: sleepData!.fallenAsleep,
+                wokenUp: sleepData!.wokenUp,
+                list: list,
+              ),
             )
           ],
         ),
@@ -93,9 +96,15 @@ class Time extends StatelessWidget {
               const SizedBox(
                 width: 15,
               ),
-              Text(
-                fallenAsleep!,
-                style: TextStyle(fontSize: fontSize, color: Colors.white),
+              LimitedBox(
+                maxWidth: 100,
+                child: Text(
+                  fallenAsleep!,
+                  style: TextStyle(
+                      fontSize: fontSize,
+                      color: Colors.white,
+                      overflow: TextOverflow.ellipsis),
+                ),
               )
             ],
           ),
@@ -111,9 +120,15 @@ class Time extends StatelessWidget {
               const SizedBox(
                 width: 15,
               ),
-              Text(
-                wokenUp!,
-                style: TextStyle(fontSize: fontSize, color: Colors.white),
+              LimitedBox(
+                maxWidth: 100,
+                child: Text(
+                  wokenUp!,
+                  style: TextStyle(
+                      fontSize: fontSize,
+                      color: Colors.white,
+                      overflow: TextOverflow.ellipsis),
+                ),
               )
             ],
           ),
@@ -219,15 +234,16 @@ class Hours extends StatelessWidget {
         width: 15,
       ),
       Text(
-        sleepDataProvider.getPrikaziNulu
-            ? hours == 0 && minutes! > 0
-                ? '$minutes min'
-                : hours! > 0 && minutes == 0
-                    ? '$hours'
-                    : hours! > 0 && minutes! > 0
-                        ? '$hours:$minutes'
-                        : '--:--'
-            : '--:--',
+        // sleepDataProvider.getPrikaziNulu
+        //     ?
+        hours == 0 && minutes! > 0
+            ? '$minutes min'
+            : hours! > 0 && minutes == 0
+                ? '$hours'
+                : hours! > 0 && minutes! > 0
+                    ? '$hours:$minutes'
+                    : '--:--',
+        // : '--:--',
         style: TextStyle(fontSize: fontSize, color: Colors.white),
       )
     ]);

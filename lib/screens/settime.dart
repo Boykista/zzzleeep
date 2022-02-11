@@ -31,7 +31,7 @@ class _SetSleepTimeState extends State<SetSleepTime> {
         dateData: sleepDataProvider.getSleepDataList[0].date, toHive: false);
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
-    double keyboard = MediaQuery.of(context).viewInsets.bottom;
+    // double keyboard = MediaQuery.of(context).viewInsets.bottom;
     print('SCREENHEIGHT $screenHeight');
     return Scaffold(
       extendBody: true,
@@ -105,15 +105,15 @@ class _SetSleepTimeState extends State<SetSleepTime> {
                               itemBuilder: (BuildContext context, int i) {
                                 SleepData sleepData =
                                     sleepDataProvider.getSleepDataList[i];
-                                print('IIIIIIIIIIIIIII: $i');
+
                                 return Column(
                                   children: [
                                     i > 0
-                                        ? Divider(
+                                        ? const Divider(
                                             color: Colors.indigo,
                                             thickness: 1.5,
                                           )
-                                        : SizedBox(),
+                                        : const SizedBox(),
                                     ShowData(
                                       sleepData: sleepData,
                                       fontSize: fontSize,
@@ -125,7 +125,7 @@ class _SetSleepTimeState extends State<SetSleepTime> {
                               }),
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 5,
                       ),
                       Text(
@@ -140,6 +140,7 @@ class _SetSleepTimeState extends State<SetSleepTime> {
                         child: Padding(
                             padding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
                             child: TextField(
+                              controller: sleepDataProvider.getNotesController,
                               textInputAction: TextInputAction.newline,
                               maxLines: 20,
                               onTap: () {},
@@ -162,6 +163,11 @@ class _SetSleepTimeState extends State<SetSleepTime> {
                                     ),
                                     borderRadius: BorderRadius.circular(20)),
                               ),
+                              onChanged: (value) {
+                                sleepDataProvider.setNotes(notes: value);
+                                print(
+                                    'DDDDDDDDDDDDD ${sleepDataProvider.getNotesController.text}');
+                              },
                             )),
                       ),
                     ],
@@ -199,7 +205,6 @@ class _SetSleepTimeState extends State<SetSleepTime> {
         height: 60,
         index: currentIndex,
         onTap: (index) async {
-          print('AAAAAAAAAAA ADDED');
           setState(() {
             currentIndex = index;
           });
@@ -207,6 +212,10 @@ class _SetSleepTimeState extends State<SetSleepTime> {
             SleepData sleepDataPlus =
                 SleepData(date: sleepDataProvider.getSleepDataList[0].date);
             sleepDataProvider.increaseSleepDataList(sleepData: sleepDataPlus);
+          } else if (index == 1) {
+            print('INDEX 2');
+            SleepInput.saveInputs(
+                sleepInput: sleepDataProvider.getSleepDataList);
           }
         },
         items: [

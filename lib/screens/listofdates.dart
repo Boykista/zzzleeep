@@ -113,8 +113,10 @@ class _SleepDatesState extends State<SleepDates> {
                   print(
                       'LENGTH POJEDINACNOG SLEEP INPUTA $sleepInputList: ${sleepInputList.length}');
                   SleepData sleepInput = SleepData(date: sleepData[0].date);
+
                   if (sleepInputList.length > 1) {
                     moreThanOneInput = true;
+
                     sleepInput = SleepInput.hoursMinutesConverter(
                         sleepdata: sleepInputList);
                     sleepInput.fallenAsleep = SleepInput.fallenAsleepConverter(
@@ -146,7 +148,8 @@ class _SleepDatesState extends State<SleepDates> {
                           fontSize: widget.fontSize,
                           i: i,
                           list: true,
-                          sleepData: sleepInput,
+                          sleepData:
+                              moreThanOneInput ? sleepInput : sleepInputList[0],
                         ),
                       ),
                       Container(
@@ -168,10 +171,10 @@ class _SleepDatesState extends State<SleepDates> {
                                   }
                                 })),
                             onPressed: () {
-                              print('PRESSED');
-
                               sleepDataProvider.setSleepDataList(
                                   sleepData: sleepInputList);
+                              sleepDataProvider.setNotes(
+                                  notes: sleepInputList[0].notes);
                               Navigator.pushNamed(context, '/settime',
                                   arguments: sleepInputList);
                             },
