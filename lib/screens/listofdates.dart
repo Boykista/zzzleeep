@@ -6,6 +6,7 @@ import 'package:zzzleep/functions/sleepconverter.dart';
 import 'package:zzzleep/models/sleepinput.dart';
 import 'package:zzzleep/parts/sleepfields.dart';
 import 'package:zzzleep/providers/sleepdataprovider.dart';
+import 'package:zzzleep/screens/settime.dart';
 
 class ListOfDates extends StatelessWidget {
   ListOfDates({Key? key}) : super(key: key);
@@ -39,20 +40,18 @@ class ListOfDates extends StatelessWidget {
       bottomNavigationBar: CurvedNavigationBar(
         onTap: (value) {
           print('AAAAAAAAAABBBBBBB');
-          Hive.box('sleepdata').delete('2022-02-05');
+          Hive.box('sleepdata').delete('2022-02-13');
         },
         buttonBackgroundColor: Colors.white,
         color: indigo!.withOpacity(0.58),
         backgroundColor: Colors.transparent,
         height: 60,
         items: [
-          IconButton(
-              onPressed: () {},
-              icon: Icon(
-                Icons.add,
-                color: Colors.indigo[900],
-                size: 30,
-              ))
+          Icon(
+            Icons.stacked_line_chart,
+            color: Colors.indigo[900],
+            size: 30,
+          )
         ],
       ),
     );
@@ -123,6 +122,8 @@ class _SleepDatesState extends State<SleepDates> {
                         sleepData: sleepInputList);
                     sleepInput.wokenUp =
                         SleepInput.wokenUpConverter(sleepData: sleepInputList);
+                    print(
+                        'AAAAAAAAAAAAAAAAA ${sleepInput.hours}   ${sleepInput.minutes}');
                   } else {
                     moreThanOneInput = false;
                   }
@@ -161,13 +162,18 @@ class _SleepDatesState extends State<SleepDates> {
                             borderRadius: BorderRadius.circular(30)),
                         child: TextButton(
                             style: ButtonStyle(
+                                shape: MaterialStateProperty.all<
+                                        RoundedRectangleBorder>(
+                                    RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(30))),
                                 foregroundColor:
                                     MaterialStateProperty.all<Color>(
                                         Colors.transparent),
                                 overlayColor:
                                     MaterialStateProperty.resolveWith((states) {
                                   if (states.contains(MaterialState.pressed)) {
-                                    return widget.indigo?.withOpacity(0.35);
+                                    return widget.indigo?.withOpacity(0.5);
                                   }
                                 })),
                             onPressed: () {
@@ -175,8 +181,12 @@ class _SleepDatesState extends State<SleepDates> {
                                   sleepData: sleepInputList);
                               sleepDataProvider.setNotes(
                                   notes: sleepInputList[0].notes);
-                              Navigator.pushNamed(context, '/settime',
-                                  arguments: sleepInputList);
+                              // Navigator.pushNamed(context, '/settime',
+                              //     arguments: sleepInputList);
+                              Navigator.push(
+                                context,
+                                _createRoute(),
+                              );
                             },
                             child: SizedBox(
                               height: 130,
@@ -211,4 +221,28 @@ class _SleepDatesState extends State<SleepDates> {
           }
         });
   }
+}
+
+Route _createRoute() {
+  return PageRouteBuilder(
+    transitionDuration: Duration(seconds: 2),
+    pageBuilder: (context, animation, secondaryAnimation) =>
+        const SetSleepTime(),
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      const begin = Offset(1.0, 0.0);
+      const end = Offset.zero;
+      const curve = Curves.ease;
+
+      final tween = Tween(begin: begin, end: end);
+      final curvedAnimation = CurvedAnimation(
+        parent: animation,
+        curve: curve,
+      );
+
+      return SlideTransition(
+        position: tween.animate(curvedAnimation),
+        child: child,
+      );
+    },
+  );
 }

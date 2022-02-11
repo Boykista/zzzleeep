@@ -20,6 +20,12 @@ bool moreThanOneInput = false;
 
 class _SetSleepTimeState extends State<SetSleepTime> {
   @override
+  void dispose() {
+    super.dispose();
+    var refreshScreen = Provider.of<SleepDataProvider>(context);
+  }
+
+  @override
   Widget build(BuildContext context) {
     var sleepDataProvider = Provider.of<SleepDataProvider>(context);
     if (sleepDataProvider.getSleepDataList.length > 1) {
@@ -32,6 +38,7 @@ class _SetSleepTimeState extends State<SetSleepTime> {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
     // double keyboard = MediaQuery.of(context).viewInsets.bottom;
+
     print('SCREENHEIGHT $screenHeight');
     return Scaffold(
       extendBody: true,

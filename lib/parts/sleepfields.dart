@@ -84,6 +84,7 @@ class Time extends StatelessWidget {
   final int? i;
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
     if (list!) {
       return Column(
         children: [
@@ -97,7 +98,7 @@ class Time extends StatelessWidget {
                 width: 15,
               ),
               LimitedBox(
-                maxWidth: 100,
+                maxWidth: screenWidth / 3,
                 child: Text(
                   fallenAsleep!,
                   style: TextStyle(
@@ -121,7 +122,7 @@ class Time extends StatelessWidget {
                 width: 15,
               ),
               LimitedBox(
-                maxWidth: 100,
+                maxWidth: screenWidth / 3,
                 child: Text(
                   wokenUp!,
                   style: TextStyle(
@@ -225,6 +226,7 @@ class Hours extends StatelessWidget {
   Widget build(BuildContext context) {
     var sleepDataProvider =
         Provider.of<SleepDataProvider>(context, listen: false);
+
     return Row(children: [
       const Icon(
         Icons.access_time,
@@ -241,7 +243,9 @@ class Hours extends StatelessWidget {
             : hours! > 0 && minutes == 0
                 ? '$hours'
                 : hours! > 0 && minutes! > 0
-                    ? '$hours:$minutes'
+                    ? minutes! < 10
+                        ? '$hours:0$minutes'
+                        : '$hours:$minutes'
                     : '--:--',
         // : '--:--',
         style: TextStyle(fontSize: fontSize, color: Colors.white),

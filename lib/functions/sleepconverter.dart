@@ -15,9 +15,9 @@ class SleepInput {
     // await Hive.openBox<SleepData>('sleepdata');
 
     final sleepData = Hive.box('sleepdata');
-    SleepData sleepinput = SleepData(date: DateTime.now());
 
     if (sleepData.isEmpty) {
+      SleepData sleepinput = SleepData(date: DateTime.now());
       sleepData.put(sleepinput.keyDate, [sleepinput]);
       print('DODANO 1');
     } else {
@@ -27,8 +27,14 @@ class SleepInput {
           SleepInput.dateConverter(dateData: DateTime.now(), toHive: true);
 
       if (lastSleepData.date!.isBefore(today)) {
-        sleepData.put(sleepinput.keyDate, [sleepinput]);
-        print('DODANO 2');
+        int dayDifference = today.difference(lastSleepData.date!).inDays;
+        print('RAZLIKA U DANIMA: $dayDifference');
+        for (int i = 0; i < dayDifference; i++) {
+          SleepData newSleepData =
+              SleepData(date: lastSleepData.date!.add(Duration(days: i + 1)));
+          print(newSleepData.keyDate);
+          sleepData.put(newSleepData.keyDate, [newSleepData]);
+        }
       } else {
         print('DANAŠNJI DATUM NIJE POSLIJE ZADNJEG IZ BAZE');
       }
@@ -68,7 +74,7 @@ class SleepInput {
     }
     if (minutes > 60) {
       hours += (minutes / 60).truncate();
-      minutes = ((minutes / 60 - (minutes / 60).truncate()) * 60).truncate();
+      minutes = ((minutes / 60 - (minutes / 60).truncate()) * 60).round();
     }
     if (minutes == 60) {
       minutes = 0;
