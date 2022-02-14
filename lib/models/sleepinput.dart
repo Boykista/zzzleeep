@@ -34,4 +34,6 @@ class SleepData extends HiveObject {
     date = dateInString.parse(dateInString.format(date!));
     keyDate = dateInString.format(date!);
   }
+
+  static Box<dynamic> getBox() => Hive.box('sleepdata');
 }

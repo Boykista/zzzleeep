@@ -14,10 +14,6 @@ class SleepDataProvider with ChangeNotifier {
 
   TextEditingController get getNotesController => _notesController;
 
-  bool _refreshScreen = false;
-
-  bool get getRefreshScreen => _refreshScreen;
-
   void setSleepDataList({@required List<SleepData>? sleepData}) {
     _sleepDataList = sleepData!;
     notifyListeners();
@@ -60,8 +56,4 @@ class SleepDataProvider with ChangeNotifier {
   //   notifyListeners();
   // }
 
-  void refreshScreen(bool refreshScreen) {
-    _refreshScreen = refreshScreen;
-    notifyListeners();
-  }
 }

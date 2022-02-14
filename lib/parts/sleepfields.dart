@@ -85,6 +85,7 @@ class Time extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
+    var sleepDataProvider = Provider.of<SleepDataProvider>(context);
     if (list!) {
       return Column(
         children: [
@@ -136,7 +137,6 @@ class Time extends StatelessWidget {
         ],
       );
     } else {
-      var sleepDataProvider = Provider.of<SleepDataProvider>(context);
       return Column(
         children: [
           TextButton(
@@ -224,8 +224,8 @@ class Hours extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var sleepDataProvider =
-        Provider.of<SleepDataProvider>(context, listen: false);
+    // var sleepDataProvider =
+    //     Provider.of<SleepDataProvider>(context, listen: false);
 
     return Row(children: [
       const Icon(

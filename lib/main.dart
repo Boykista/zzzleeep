@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:zzzleep/models/sleepinput.dart';
+import 'package:zzzleep/providers/animationprovider.dart';
 import 'package:zzzleep/providers/sleepdataprovider.dart';
 import 'package:zzzleep/screens/listofdates.dart';
 import 'package:zzzleep/screens/settime.dart';
@@ -11,10 +12,13 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
   Hive.registerAdapter(SleepDataAdapter());
+  //await Hive.openBox('sleepdata');
   runApp(MultiProvider(
     providers: [
       ChangeNotifierProvider(
           create: (BuildContext context) => SleepDataProvider()),
+      ChangeNotifierProvider(
+          create: (BuildContext context) => AnimationProvider()),
     ],
     child: MaterialApp(
       routes: {
