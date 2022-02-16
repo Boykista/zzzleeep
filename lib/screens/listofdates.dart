@@ -63,10 +63,10 @@ class _SleepDatesState extends State<SleepDates> with TickerProviderStateMixin {
   Animation<double>? scale; //, scale2;
   List wholeList = [];
 
-  void bottomNavigationCallBack(bool anotherScreen) {
-    // if (anotherScreen) {
-    //   setState(() {});
-    // }
+  void bottomNavigationCallBack(bool savedInputs) {
+    if (savedInputs) {
+      wholeList = [];
+    }
   }
 
   @override
@@ -101,6 +101,8 @@ class _SleepDatesState extends State<SleepDates> with TickerProviderStateMixin {
     double screenHeight = MediaQuery.of(context).size.height;
     var animationProvider =
         Provider.of<AnimationProvider>(context, listen: false);
+    var sleepDataProvider =
+        Provider.of<SleepDataProvider>(context, listen: false);
 
     return FutureBuilder(
         future: Hive.openBox('sleepdata'),
@@ -115,6 +117,7 @@ class _SleepDatesState extends State<SleepDates> with TickerProviderStateMixin {
                   builder: (context, value, _) {
                     final data = Hive.box('sleepdata');
                     animationProvider.setOpacityListLength(data.length);
+                    wholeList.clear();
                     return SizedBox.expand(
                       child: Stack(
                         children: [
@@ -128,6 +131,7 @@ class _SleepDatesState extends State<SleepDates> with TickerProviderStateMixin {
                                 List<SleepData> sleepInputList =
                                     List<SleepData>.from(sleepData);
                                 wholeList.add(sleepInputList);
+                                //sleepDataProvider.wholeList.add(sleepInputList);
                                 print(
                                     'LENGTH POJEDINACNOG SLEEP INPUTA $sleepInputList: ${sleepInputList.length}');
                                 SleepData sleepInput =
@@ -152,7 +156,11 @@ class _SleepDatesState extends State<SleepDates> with TickerProviderStateMixin {
 
                                 return DelayedDisplay(
                                   delay: Duration(
-                                      seconds: i < data.length ? 0 : i),
+                                      milliseconds: data.length < 7
+                                          ? i * 700
+                                          : i < data.length - 7
+                                              ? 0
+                                              : i * 700),
                                   slidingCurve: Curves.bounceOut,
                                   child: Dates(
                                     indigo: indigo,
@@ -249,11 +257,12 @@ class _DatesState extends State<Dates> with TickerProviderStateMixin {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
     var animationProvider = Provider.of<AnimationProvider>(context);
+    var sleepDataProvider = Provider.of<SleepDataProvider>(context);
     return AnimatedBuilder(
       animation: widget.animationController!,
       builder: ((BuildContext context, Widget? child) => AnimatedOpacity(
             curve: Curves.easeInExpo,
-            duration: Duration(seconds: 1),
+            duration: const Duration(seconds: 1),
             opacity: animationProvider.getOpacity[widget.i!],
             child: ScaleTransition(
               scale: widget.scale!,
@@ -304,30 +313,21 @@ class _DatesState extends State<Dates> with TickerProviderStateMixin {
                               }
                             })),
                         onPressed: () async {
-                          var sleepDataProvider =
-                              Provider.of<SleepDataProvider>(context,
-                                  listen: false);
                           sleepDataProvider.setSleepDataList(
                               sleepData: widget.wholeList![widget.i!]);
                           sleepDataProvider.setNotes(
                               notes: widget.wholeList![widget.i!][0].notes);
-                          // await Future.delayed(Duration(milliseconds: 300));
-
                           animationProvider.displayOne(widget.i!);
                           animationProvider.setHeight(true);
-                          await Future.delayed(Duration(milliseconds: 1500));
+                          await Future.delayed(
+                              const Duration(milliseconds: 1500));
                           widget.animationController!.forward();
-                          await Future.delayed(Duration(milliseconds: 350));
-
+                          await Future.delayed(
+                              const Duration(milliseconds: 350));
                           widget.animationController2!.forward();
-
                           sleepDataProvider.secondScreen(true);
-                          await Future.delayed(Duration(milliseconds: 850));
-
-                          //widget.callBack!(true);
-                          // setState(() {
-                          //   refresh = true;
-                          // });
+                          await Future.delayed(
+                              const Duration(milliseconds: 850));
                         },
                         child: SizedBox(
                           height: 130,
@@ -391,7 +391,6 @@ class _BottomNavigationBarStackState extends State<BottomNavigationBarStack> {
 
     if (sleepDataProvider.getSecondScreen) {
       var animationProvider = Provider.of<AnimationProvider>(context);
-      print('AAAAAAAAAAA 1 ${animationProvider.getHeight}');
       return AnimatedContainer(
         duration: const Duration(seconds: 1),
         width: MediaQuery.of(context).size.width,
@@ -421,7 +420,6 @@ class _BottomNavigationBarStackState extends State<BottomNavigationBarStack> {
       );
     } else {
       var animationProvider = Provider.of<AnimationProvider>(context);
-      print('AAAAAAAAAAA 2 ${animationProvider.getHeight}');
       return AnimatedContainer(
         duration: const Duration(seconds: 1),
         width: MediaQuery.of(context).size.width,
@@ -438,8 +436,8 @@ class _BottomNavigationBarStackState extends State<BottomNavigationBarStack> {
             elevation: 0,
             notchMargin: 6,
             color: Colors.indigo[900]!.withOpacity(0.6),
-            child: SizedBox(height: 50),
-            shape: CircularNotchedRectangle(),
+            child: const SizedBox(height: 50),
+            shape: const CircularNotchedRectangle(),
           ),
         ),
       );
@@ -473,18 +471,33 @@ class _BottomAppBarItemState extends State<BottomAppBarItem> {
         backgroundColor: Colors.indigo[900]!.withOpacity(0.85),
         onPressed: () async {
           if (widget.i == 0) {
+            // sleepDataProvider.setWholeListToEmpty();
+            // sleepDataProvider.dontUpdateSleepData();
             animationProvider.setHeight(false);
+
             widget.animationController2!.reverse();
-            await Future.delayed(Duration(milliseconds: 850));
+            await Future.delayed(const Duration(milliseconds: 850));
             widget.animationController!.reverse();
-            await Future.delayed(Duration(milliseconds: 850));
+            await Future.delayed(const Duration(milliseconds: 850));
             animationProvider.displayAll();
             sleepDataProvider.secondScreen(false);
           } else if (widget.i == 1) {
             SleepData sleepDataPlus =
                 SleepData(date: sleepDataProvider.getSleepDataList[0].date);
             sleepDataProvider.increaseSleepDataList(sleepData: sleepDataPlus);
-          } else {}
+          } else {
+            //sleepDataProvider.setWholeListToEmpty();
+            SleepInput.saveInputs(
+                sleepInput: sleepDataProvider.getSleepDataList);
+
+            animationProvider.setHeight(false);
+            widget.animationController2!.reverse();
+            await Future.delayed(const Duration(milliseconds: 850));
+            widget.animationController!.reverse();
+            await Future.delayed(const Duration(milliseconds: 850));
+            animationProvider.displayAll();
+            sleepDataProvider.secondScreen(false);
+          }
         },
         child: Icon(
           widget.i == 0

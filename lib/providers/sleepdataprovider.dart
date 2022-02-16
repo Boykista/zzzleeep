@@ -18,6 +18,14 @@ class SleepDataProvider with ChangeNotifier {
 
   bool get getSecondScreen => _secondScreen;
 
+  List _initialSleepDataList = [];
+
+  List get getInitialList => [];
+
+  // List wholeList = [];
+
+  // List get getWholeList => wholeList;
+
   void setSleepDataList({@required List<SleepData>? sleepData}) {
     _sleepDataList = sleepData!;
     notifyListeners();
@@ -60,8 +68,20 @@ class SleepDataProvider with ChangeNotifier {
     _secondScreen = secondScreen;
     notifyListeners();
   }
-  // void notesController({@required List<SleepData>? sleepData}) {
+
+  // void setWholeListToEmpty() {
+  //   wholeList.clear();
   //   notifyListeners();
   // }
 
+  // void setWholeList(List<SleepData> sleepData) {
+  //   wholeList.add(sleepData);
+  //   notifyListeners();
+  // }
+
+  void dontUpdateSleepData() {
+    SleepData sleepData = SleepData(date: _sleepDataList[0].date);
+    _sleepDataList = [sleepData];
+    notifyListeners();
+  }
 }
