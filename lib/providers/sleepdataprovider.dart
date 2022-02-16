@@ -14,6 +14,10 @@ class SleepDataProvider with ChangeNotifier {
 
   TextEditingController get getNotesController => _notesController;
 
+  bool _secondScreen = false;
+
+  bool get getSecondScreen => _secondScreen;
+
   void setSleepDataList({@required List<SleepData>? sleepData}) {
     _sleepDataList = sleepData!;
     notifyListeners();
@@ -52,6 +56,10 @@ class SleepDataProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  void secondScreen(bool secondScreen) {
+    _secondScreen = secondScreen;
+    notifyListeners();
+  }
   // void notesController({@required List<SleepData>? sleepData}) {
   //   notifyListeners();
   // }

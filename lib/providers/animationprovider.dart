@@ -16,14 +16,14 @@ class AnimationProvider with ChangeNotifier {
 
   int get getListLength => _length;
 
-  AnimationProvider() {
-    // init();
-  }
+  double _height = 0;
 
-  Future<void> init() async {
-    _length = await Hive.openBox('sleepData').then((value) => value.length);
-    setOpacityListLength(_length);
-  }
+  double get getHeight => _height;
+
+  // Future<void> init() async {
+  //   _length = await Hive.openBox('sleepData').then((value) => value.length);
+  //   setOpacityListLength(_length);
+  // }
 
   void displayOne(int i) {
     for (int k = 0; k < _length; k++) {
@@ -46,6 +46,10 @@ class AnimationProvider with ChangeNotifier {
     }
   }
 
+  void setHeight(bool display) {
+    display ? _height = 75 : _height = 0;
+    notifyListeners();
+  }
   // void setI(int i) {
   //   _i = i;
   //   notifyListeners();

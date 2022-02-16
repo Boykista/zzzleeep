@@ -1,6 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
-import 'package:hive/hive.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:zzzleep/functions/sleepconverter.dart';
 import 'package:zzzleep/models/sleepinput.dart';
@@ -30,35 +32,9 @@ class ListOfDates extends StatelessWidget {
           SafeArea(
             child: Padding(
               padding: const EdgeInsets.only(top: 15.0),
-              child: Column(
-                children: [
-                  SleepDates(indigo: indigo, fontSize: fontSize),
-                ],
-              ),
+              child: SleepDates(indigo: indigo, fontSize: fontSize),
             ),
           ),
-        ],
-      ),
-      bottomNavigationBar: CurvedNavigationBar(
-        onTap: (value) {
-          print('AAAAAAAAAABBBBBBB');
-          Hive.box('sleepdata').delete('2022-02-13');
-        },
-        buttonBackgroundColor: Colors.white,
-        color: indigo!.withOpacity(0.58),
-        backgroundColor: Colors.transparent,
-        height: 60,
-        items: [
-          FaIcon(
-            FontAwesomeIcons.chartLine,
-            color: Colors.indigo[900],
-            size: 30,
-          )
-          // Icon(
-          //   Icons.stacked_line_chart,
-          //   color: Colors.indigo[900],
-          //   size: 30,
-          // )
         ],
       ),
     );
@@ -83,6 +59,16 @@ class _SleepDatesState extends State<SleepDates> with TickerProviderStateMixin {
   bool moreThanOneInput = false;
   AnimationController? _animationController2;
   Animation<double>? scale2;
+  AnimationController? _animationController; //, _animationController2;
+  Animation<double>? scale; //, scale2;
+  List wholeList = [];
+
+  void bottomNavigationCallBack(bool anotherScreen) {
+    // if (anotherScreen) {
+    //   setState(() {});
+    // }
+  }
+
   @override
   void initState() {
     _animationController2 = AnimationController(
@@ -91,12 +77,21 @@ class _SleepDatesState extends State<SleepDates> with TickerProviderStateMixin {
         duration: Duration(seconds: 1));
     scale2 = Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
         parent: _animationController2!, curve: Curves.easeOutExpo));
+
+    _animationController = AnimationController(
+        animationBehavior: AnimationBehavior.preserve,
+        vsync: this,
+        duration: Duration(seconds: 1));
+    scale = Tween<double>(begin: 1.0, end: 0.0).animate(CurvedAnimation(
+        parent: _animationController!, curve: Curves.easeOutExpo));
     super.initState();
   }
 
   @override
   void dispose() {
     Hive.close();
+    _animationController!.dispose();
+    _animationController2!.dispose();
     super.dispose();
   }
 
@@ -106,6 +101,7 @@ class _SleepDatesState extends State<SleepDates> with TickerProviderStateMixin {
     double screenHeight = MediaQuery.of(context).size.height;
     var animationProvider =
         Provider.of<AnimationProvider>(context, listen: false);
+
     return FutureBuilder(
         future: Hive.openBox('sleepdata'),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -119,67 +115,79 @@ class _SleepDatesState extends State<SleepDates> with TickerProviderStateMixin {
                   builder: (context, value, _) {
                     final data = Hive.box('sleepdata');
                     animationProvider.setOpacityListLength(data.length);
-                    return Stack(
-                      children: [
-                        SingleChildScrollView(
-                          child: ListView.builder(
-                            reverse: true,
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            itemBuilder: (BuildContext context, int i) {
-                              final sleepData = data.getAt(i) as List;
-                              var sleepInputList =
-                                  List<SleepData>.from(sleepData);
-                              print(
-                                  'LENGTH POJEDINACNOG SLEEP INPUTA $sleepInputList: ${sleepInputList.length}');
-                              SleepData sleepInput =
-                                  SleepData(date: sleepData[0].date);
+                    return SizedBox.expand(
+                      child: Stack(
+                        children: [
+                          SingleChildScrollView(
+                            child: ListView.builder(
+                              reverse: true,
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              itemBuilder: (BuildContext context, int i) {
+                                final sleepData = data.getAt(i) as List;
+                                List<SleepData> sleepInputList =
+                                    List<SleepData>.from(sleepData);
+                                wholeList.add(sleepInputList);
+                                print(
+                                    'LENGTH POJEDINACNOG SLEEP INPUTA $sleepInputList: ${sleepInputList.length}');
+                                SleepData sleepInput =
+                                    SleepData(date: sleepData[0].date);
+                                print('WHOLEEEEEEEEEEEEEEEEEEEEE $wholeList');
+                                if (sleepInputList.length > 1) {
+                                  moreThanOneInput = true;
+                                  sleepInput = SleepInput.hoursMinutesConverter(
+                                      sleepdata: sleepInputList);
+                                  sleepInput.fallenAsleep =
+                                      SleepInput.fallenAsleepConverter(
+                                          sleepData: sleepInputList);
+                                  sleepInput.wokenUp =
+                                      SleepInput.wokenUpConverter(
+                                          sleepData: sleepInputList);
+                                } else {
+                                  moreThanOneInput = false;
+                                }
+                                String date = SleepInput.dateConverter(
+                                    dateData: sleepInputList[0].date,
+                                    toHive: false);
 
-                              if (sleepInputList.length > 1) {
-                                moreThanOneInput = true;
-                                sleepInput = SleepInput.hoursMinutesConverter(
-                                    sleepdata: sleepInputList);
-                                sleepInput.fallenAsleep =
-                                    SleepInput.fallenAsleepConverter(
-                                        sleepData: sleepInputList);
-                                sleepInput.wokenUp =
-                                    SleepInput.wokenUpConverter(
-                                        sleepData: sleepInputList);
-                              } else {
-                                moreThanOneInput = false;
-                              }
-                              String date = SleepInput.dateConverter(
-                                  dateData: sleepInputList[0].date,
-                                  toHive: false);
-
-                              return DelayedDisplay(
-                                delay:
-                                    Duration(seconds: i < data.length ? 0 : i),
-                                slidingCurve: Curves.bounceOut,
-                                child: Dates(
-                                  indigo: indigo,
-                                  fontSize: fontSize,
-                                  sleepInput: sleepInput,
-                                  sleepInputList: sleepInputList,
-                                  i: i,
-                                  date: date,
-                                  animationController2: _animationController2,
-                                  scale2: scale2,
-                                ),
-                              );
-                            },
-                            itemCount: data.length,
+                                return DelayedDisplay(
+                                  delay: Duration(
+                                      seconds: i < data.length ? 0 : i),
+                                  slidingCurve: Curves.bounceOut,
+                                  child: Dates(
+                                    indigo: indigo,
+                                    fontSize: fontSize,
+                                    sleepInput: sleepInput,
+                                    sleepInputList: sleepInputList,
+                                    i: i,
+                                    date: date,
+                                    animationController2: _animationController2,
+                                    scale2: scale2,
+                                    wholeList: wholeList,
+                                    animationController: _animationController,
+                                    scale: scale,
+                                    callBack: bottomNavigationCallBack,
+                                  ),
+                                );
+                              },
+                              itemCount: data.length,
+                            ),
                           ),
-                        ),
-                        LimitedBox(
-                          maxHeight: screenHeight - 100,
-                          maxWidth: screenWidth,
-                          child: ScaleTransition(
-                            scale: scale2!,
-                            child: SetSleepTime(),
+                          SizedBox.expand(
+                            child: ScaleTransition(
+                              scale: scale2!,
+                              child: const SetSleepTime(),
+                            ),
                           ),
-                        )
-                      ],
+                          Positioned(
+                            bottom: 0,
+                            child: BottomNavigationBarStack(
+                                animationController2: _animationController2,
+                                animationController: _animationController,
+                                callBack: bottomNavigationCallBack),
+                          ),
+                        ],
+                      ),
                     );
                   });
             }
@@ -200,9 +208,14 @@ class Dates extends StatefulWidget {
       @required this.i,
       @required this.date,
       @required this.animationController2,
-      @required this.scale2})
+      @required this.scale2,
+      @required this.wholeList,
+      @required this.animationController,
+      @required this.scale,
+      @required this.callBack})
       : super(key: key);
-
+  AnimationController? animationController; //, _animationController2;
+  Animation<double>? scale; //, scale2;
   Color? indigo;
   double? fontSize;
   SleepData? sleepInput;
@@ -212,29 +225,22 @@ class Dates extends StatefulWidget {
   int? millisecondsDelay;
   AnimationController? animationController2;
   Animation<double>? scale2;
+  List? wholeList;
+  Function? callBack;
 
   @override
   _DatesState createState() => _DatesState();
 }
 
 class _DatesState extends State<Dates> with TickerProviderStateMixin {
-  AnimationController? _animationController; //, _animationController2;
-  Animation<double>? scale; //, scale2;
   @override
   void initState() {
-    _animationController = AnimationController(
-        animationBehavior: AnimationBehavior.preserve,
-        vsync: this,
-        duration: Duration(seconds: 1));
-    scale = Tween<double>(begin: 1.0, end: 0.0).animate(CurvedAnimation(
-        parent: _animationController!, curve: Curves.easeOutExpo));
-
     super.initState();
   }
 
   @override
   void dispose() {
-    _animationController?.dispose();
+    // animationController?.dispose();
     super.dispose();
   }
 
@@ -243,13 +249,14 @@ class _DatesState extends State<Dates> with TickerProviderStateMixin {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
     var animationProvider = Provider.of<AnimationProvider>(context);
-    print('WWWWWWWWWWWWWWWWW ${scale!.value * screenWidth}');
     return AnimatedBuilder(
-      animation: _animationController!,
-      builder: ((BuildContext context, Widget? child) => Opacity(
+      animation: widget.animationController!,
+      builder: ((BuildContext context, Widget? child) => AnimatedOpacity(
+            curve: Curves.easeInExpo,
+            duration: Duration(seconds: 1),
             opacity: animationProvider.getOpacity[widget.i!],
             child: ScaleTransition(
-              scale: scale!,
+              scale: widget.scale!,
               child: Stack(
                 children: [
                   Container(
@@ -301,21 +308,26 @@ class _DatesState extends State<Dates> with TickerProviderStateMixin {
                               Provider.of<SleepDataProvider>(context,
                                   listen: false);
                           sleepDataProvider.setSleepDataList(
-                              sleepData: widget.sleepInputList);
+                              sleepData: widget.wholeList![widget.i!]);
                           sleepDataProvider.setNotes(
-                              notes: widget.sleepInputList![0].notes);
-                          await Future.delayed(Duration(milliseconds: 300));
+                              notes: widget.wholeList![widget.i!][0].notes);
+                          // await Future.delayed(Duration(milliseconds: 300));
+
                           animationProvider.displayOne(widget.i!);
-                          await Future.delayed(Duration(milliseconds: 300));
-                          _animationController!.forward();
-                          await Future.delayed(Duration(milliseconds: 1000));
+                          animationProvider.setHeight(true);
+                          await Future.delayed(Duration(milliseconds: 1500));
+                          widget.animationController!.forward();
+                          await Future.delayed(Duration(milliseconds: 350));
+
                           widget.animationController2!.forward();
-                          // Navigator.pushNamed(context, '/settime',
-                          //     arguments: widget.sleepInputList);
-                          // Navigator.push(
-                          //   context,
-                          //   _createRoute(),
-                          // );
+
+                          sleepDataProvider.secondScreen(true);
+                          await Future.delayed(Duration(milliseconds: 850));
+
+                          //widget.callBack!(true);
+                          // setState(() {
+                          //   refresh = true;
+                          // });
                         },
                         child: SizedBox(
                           height: 130,
@@ -345,28 +357,152 @@ class _DatesState extends State<Dates> with TickerProviderStateMixin {
           )),
     );
   }
+}
 
-  Route _createRoute() {
-    return PageRouteBuilder(
-      transitionDuration: Duration(seconds: 2),
-      pageBuilder: (context, animation, secondaryAnimation) =>
-          const SetSleepTime(),
-      transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        const begin = Offset(1.0, 0.0);
-        const end = Offset.zero;
-        const curve = Curves.ease;
+class BottomNavigationBarStack extends StatefulWidget {
+  BottomNavigationBarStack(
+      {Key? key,
+      this.animationController,
+      this.animationController2,
+      this.callBack})
+      : super(key: key);
+  AnimationController? animationController, animationController2;
+  Function? callBack;
+  @override
+  _BottomNavigationBarStackState createState() =>
+      _BottomNavigationBarStackState();
+}
 
-        final tween = Tween(begin: begin, end: end);
-        final curvedAnimation = CurvedAnimation(
-          parent: animation,
-          curve: curve,
-        );
+class _BottomNavigationBarStackState extends State<BottomNavigationBarStack> {
+  int currentIndex = 1;
+  int currentIndex2 = 0;
+  bool refreshScreen = true;
+  void refresh() {
+    setState(() {
+      currentIndex = 1;
+      currentIndex2 = 0;
+      refreshScreen = false;
+    });
+  }
 
-        return SlideTransition(
-          position: tween.animate(curvedAnimation),
-          child: child,
-        );
-      },
+  @override
+  Widget build(BuildContext context) {
+    var sleepDataProvider = Provider.of<SleepDataProvider>(context);
+
+    if (sleepDataProvider.getSecondScreen) {
+      var animationProvider = Provider.of<AnimationProvider>(context);
+      print('AAAAAAAAAAA 1 ${animationProvider.getHeight}');
+      return AnimatedContainer(
+        duration: const Duration(seconds: 1),
+        width: MediaQuery.of(context).size.width,
+        height: animationProvider.getHeight,
+        child: Row(
+          children: [
+            Expanded(
+                child: BottomAppBarItem(
+              i: 0,
+              animationController: widget.animationController,
+              animationController2: widget.animationController2,
+            )),
+            Expanded(
+                child: BottomAppBarItem(
+              i: 1,
+              animationController: widget.animationController,
+              animationController2: widget.animationController2,
+            )),
+            Expanded(
+                child: BottomAppBarItem(
+              i: 2,
+              animationController: widget.animationController,
+              animationController2: widget.animationController2,
+            )),
+          ],
+        ),
+      );
+    } else {
+      var animationProvider = Provider.of<AnimationProvider>(context);
+      print('AAAAAAAAAAA 2 ${animationProvider.getHeight}');
+      return AnimatedContainer(
+        duration: const Duration(seconds: 1),
+        width: MediaQuery.of(context).size.width,
+        height: 75 - animationProvider.getHeight,
+        child: Scaffold(
+          backgroundColor: Colors.transparent,
+          floatingActionButtonLocation:
+              FloatingActionButtonLocation.centerDocked,
+          floatingActionButton: FloatingActionButton(
+              backgroundColor: Colors.indigo[900]!.withOpacity(0.85),
+              onPressed: () {},
+              child: const FaIcon(FontAwesomeIcons.chartLine)),
+          bottomNavigationBar: BottomAppBar(
+            elevation: 0,
+            notchMargin: 6,
+            color: Colors.indigo[900]!.withOpacity(0.6),
+            child: SizedBox(height: 50),
+            shape: CircularNotchedRectangle(),
+          ),
+        ),
+      );
+    }
+  }
+}
+
+class BottomAppBarItem extends StatefulWidget {
+  BottomAppBarItem(
+      {Key? key,
+      @required this.i,
+      @required this.animationController,
+      @required this.animationController2})
+      : super(key: key);
+  AnimationController? animationController, animationController2;
+  int? i;
+
+  @override
+  State<BottomAppBarItem> createState() => _BottomAppBarItemState();
+}
+
+class _BottomAppBarItemState extends State<BottomAppBarItem> {
+  @override
+  Widget build(BuildContext context) {
+    var animationProvider = Provider.of<AnimationProvider>(context);
+    var sleepDataProvider = Provider.of<SleepDataProvider>(context);
+    return Scaffold(
+      backgroundColor: Colors.transparent,
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.indigo[900]!.withOpacity(0.85),
+        onPressed: () async {
+          if (widget.i == 0) {
+            animationProvider.setHeight(false);
+            widget.animationController2!.reverse();
+            await Future.delayed(Duration(milliseconds: 850));
+            widget.animationController!.reverse();
+            await Future.delayed(Duration(milliseconds: 850));
+            animationProvider.displayAll();
+            sleepDataProvider.secondScreen(false);
+          } else if (widget.i == 1) {
+            SleepData sleepDataPlus =
+                SleepData(date: sleepDataProvider.getSleepDataList[0].date);
+            sleepDataProvider.increaseSleepDataList(sleepData: sleepDataPlus);
+          } else {}
+        },
+        child: Icon(
+          widget.i == 0
+              ? Icons.arrow_back_ios_new
+              : widget.i == 1
+                  ? Icons.add
+                  : Icons.save,
+          color: Colors.white,
+          size: 30,
+        ),
+      ),
+      bottomNavigationBar: BottomAppBar(
+        elevation: 0,
+        notchMargin: 6,
+        color: Colors.indigo[900]!.withOpacity(0.6),
+        child: const SizedBox(height: 50),
+        shape: const CircularNotchedRectangle(),
+      ),
     );
   }
 }

@@ -16,7 +16,7 @@ class SetSleepTime extends StatefulWidget {
 
 Color? indigo = Colors.indigo[900];
 double fontSize = 21;
-int currentIndex = 0;
+//int currentIndex = 0;
 bool moreThanOneInput = false;
 
 class _SetSleepTimeState extends State<SetSleepTime> {
@@ -45,8 +45,6 @@ class _SetSleepTimeState extends State<SetSleepTime> {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
     // double keyboard = MediaQuery.of(context).viewInsets.bottom;
-
-    print('SCREENHEIGHT $screenHeight');
     return sleepDataProvider.getSleepDataList.isNotEmpty
         ? Scaffold(
             extendBody: true,
@@ -65,7 +63,7 @@ class _SetSleepTimeState extends State<SetSleepTime> {
                   //   },
                   child: Container(
                     alignment: Alignment.center,
-                    margin: const EdgeInsets.fromLTRB(10, 40, 10, 40),
+                    margin: const EdgeInsets.fromLTRB(10, 40, 10, 90),
                     decoration: BoxDecoration(
                         color: indigo?.withOpacity(0.5),
                         border: Border.all(
