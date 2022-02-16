@@ -122,63 +122,77 @@ class _SleepDatesState extends State<SleepDates> with TickerProviderStateMixin {
                       child: Stack(
                         children: [
                           SingleChildScrollView(
-                            child: ListView.builder(
-                              reverse: true,
-                              shrinkWrap: true,
-                              physics: const NeverScrollableScrollPhysics(),
-                              itemBuilder: (BuildContext context, int i) {
-                                final sleepData = data.getAt(i) as List;
-                                List<SleepData> sleepInputList =
-                                    List<SleepData>.from(sleepData);
-                                wholeList.add(sleepInputList);
-                                //sleepDataProvider.wholeList.add(sleepInputList);
-                                print(
-                                    'LENGTH POJEDINACNOG SLEEP INPUTA $sleepInputList: ${sleepInputList.length}');
-                                SleepData sleepInput =
-                                    SleepData(date: sleepData[0].date);
-                                print('WHOLEEEEEEEEEEEEEEEEEEEEE $wholeList');
-                                if (sleepInputList.length > 1) {
-                                  moreThanOneInput = true;
-                                  sleepInput = SleepInput.hoursMinutesConverter(
-                                      sleepdata: sleepInputList);
-                                  sleepInput.fallenAsleep =
-                                      SleepInput.fallenAsleepConverter(
-                                          sleepData: sleepInputList);
-                                  sleepInput.wokenUp =
-                                      SleepInput.wokenUpConverter(
-                                          sleepData: sleepInputList);
-                                } else {
-                                  moreThanOneInput = false;
-                                }
-                                String date = SleepInput.dateConverter(
-                                    dateData: sleepInputList[0].date,
-                                    toHive: false);
+                            child: Column(
+                              children: [
+                                ListView.builder(
+                                  reverse: true,
+                                  shrinkWrap: true,
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  itemBuilder: (BuildContext context, int i) {
+                                    final sleepData = data.getAt(i) as List;
+                                    List<SleepData> sleepInputList =
+                                        List<SleepData>.from(sleepData);
+                                    wholeList.add(sleepInputList);
+                                    sleepDataProvider.setWholeList =
+                                        sleepInputList;
 
-                                return DelayedDisplay(
-                                  delay: Duration(
-                                      milliseconds: data.length < 7
-                                          ? i * 700
-                                          : i < data.length - 7
-                                              ? 0
-                                              : i * 700),
-                                  slidingCurve: Curves.bounceOut,
-                                  child: Dates(
-                                    indigo: indigo,
-                                    fontSize: fontSize,
-                                    sleepInput: sleepInput,
-                                    sleepInputList: sleepInputList,
-                                    i: i,
-                                    date: date,
-                                    animationController2: _animationController2,
-                                    scale2: scale2,
-                                    wholeList: wholeList,
-                                    animationController: _animationController,
-                                    scale: scale,
-                                    callBack: bottomNavigationCallBack,
-                                  ),
-                                );
-                              },
-                              itemCount: data.length,
+                                    print(
+                                        'LENGTH POJEDINACNOG SLEEP INPUTA $sleepInputList: ${sleepInputList.length}');
+                                    SleepData sleepInput =
+                                        SleepData(date: sleepData[0].date);
+                                    // print(
+                                    //     'WHOLEEEEEEEEEEEEEEEEEEEEE ${sleepDataProvider.getWholeList}');
+                                    if (sleepInputList.length > 1) {
+                                      moreThanOneInput = true;
+                                      sleepInput =
+                                          SleepInput.hoursMinutesConverter(
+                                              sleepdata: sleepInputList);
+                                      sleepInput.fallenAsleep =
+                                          SleepInput.fallenAsleepConverter(
+                                              sleepData: sleepInputList);
+                                      sleepInput.wokenUp =
+                                          SleepInput.wokenUpConverter(
+                                              sleepData: sleepInputList);
+                                    } else {
+                                      moreThanOneInput = false;
+                                    }
+                                    String date = SleepInput.dateConverter(
+                                        dateData: sleepInputList[0].date,
+                                        toHive: false);
+
+                                    return DelayedDisplay(
+                                      delay: Duration(
+                                          milliseconds: data.length < 5
+                                              ? i * 700
+                                              : i < data.length - 5
+                                                  ? 0
+                                                  : (i - (data.length - 5)) *
+                                                      700),
+                                      slidingCurve: Curves.bounceOut,
+                                      child: Dates(
+                                        indigo: indigo,
+                                        fontSize: fontSize,
+                                        sleepInput: sleepInput,
+                                        sleepInputList: sleepInputList,
+                                        i: i,
+                                        date: date,
+                                        animationController2:
+                                            _animationController2,
+                                        scale2: scale2,
+                                        wholeList: wholeList,
+                                        animationController:
+                                            _animationController,
+                                        scale: scale,
+                                        callBack: bottomNavigationCallBack,
+                                      ),
+                                    );
+                                  },
+                                  itemCount: data.length,
+                                ),
+                                const SizedBox(
+                                  height: 50,
+                                )
+                              ],
                             ),
                           ),
                           SizedBox.expand(
@@ -258,6 +272,8 @@ class _DatesState extends State<Dates> with TickerProviderStateMixin {
     double screenHeight = MediaQuery.of(context).size.height;
     var animationProvider = Provider.of<AnimationProvider>(context);
     var sleepDataProvider = Provider.of<SleepDataProvider>(context);
+
+    print('AAAAAAAAAAAA ${sleepDataProvider.getWholeList}');
     return AnimatedBuilder(
       animation: widget.animationController!,
       builder: ((BuildContext context, Widget? child) => AnimatedOpacity(
@@ -319,6 +335,7 @@ class _DatesState extends State<Dates> with TickerProviderStateMixin {
                               notes: widget.wholeList![widget.i!][0].notes);
                           animationProvider.displayOne(widget.i!);
                           animationProvider.setHeight(true);
+                          sleepDataProvider.itemIndex(widget.i!);
                           await Future.delayed(
                               const Duration(milliseconds: 1500));
                           widget.animationController!.forward();
@@ -326,6 +343,7 @@ class _DatesState extends State<Dates> with TickerProviderStateMixin {
                               const Duration(milliseconds: 350));
                           widget.animationController2!.forward();
                           sleepDataProvider.secondScreen(true);
+                          // animationProvider.backPressed(false);
                           await Future.delayed(
                               const Duration(milliseconds: 850));
                         },
@@ -429,13 +447,14 @@ class _BottomNavigationBarStackState extends State<BottomNavigationBarStack> {
           floatingActionButtonLocation:
               FloatingActionButtonLocation.centerDocked,
           floatingActionButton: FloatingActionButton(
-              backgroundColor: Colors.indigo[900]!.withOpacity(0.85),
+              elevation: 0.0,
+              backgroundColor: Colors.indigo[900]!.withOpacity(0.95),
               onPressed: () {},
               child: const FaIcon(FontAwesomeIcons.chartLine)),
           bottomNavigationBar: BottomAppBar(
             elevation: 0,
             notchMargin: 6,
-            color: Colors.indigo[900]!.withOpacity(0.6),
+            color: Colors.indigo[900]!.withOpacity(0.95),
             child: const SizedBox(height: 50),
             shape: const CircularNotchedRectangle(),
           ),
@@ -468,17 +487,28 @@ class _BottomAppBarItemState extends State<BottomAppBarItem> {
       backgroundColor: Colors.transparent,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: FloatingActionButton(
+        elevation: 0.0,
         backgroundColor: Colors.indigo[900]!.withOpacity(0.85),
         onPressed: () async {
           if (widget.i == 0) {
-            // sleepDataProvider.setWholeListToEmpty();
+            //sleepDataProvider.setWholeListToEmpty();
             // sleepDataProvider.dontUpdateSleepData();
             animationProvider.setHeight(false);
 
-            widget.animationController2!.reverse();
             await Future.delayed(const Duration(milliseconds: 850));
             widget.animationController!.reverse();
+            // animationProvider.backPressed(true);
+            widget.animationController2!.reverse();
+
             await Future.delayed(const Duration(milliseconds: 850));
+            for (int i = 0;
+                i < sleepDataProvider.getSleepDataList.length;
+                i++) {
+              sleepDataProvider.setFallenAsleep(i: i, fallenAsleep: '--:--');
+              sleepDataProvider.setWokenUp(i: i, wokenUp: '--:--');
+              sleepDataProvider.calculateHoursMinutes(
+                  i: i, hours: 0, minutes: 0);
+            }
             animationProvider.displayAll();
             sleepDataProvider.secondScreen(false);
           } else if (widget.i == 1) {
@@ -512,7 +542,7 @@ class _BottomAppBarItemState extends State<BottomAppBarItem> {
       bottomNavigationBar: BottomAppBar(
         elevation: 0,
         notchMargin: 6,
-        color: Colors.indigo[900]!.withOpacity(0.6),
+        color: Colors.indigo[900]!.withOpacity(0.85),
         child: const SizedBox(height: 50),
         shape: const CircularNotchedRectangle(),
       ),

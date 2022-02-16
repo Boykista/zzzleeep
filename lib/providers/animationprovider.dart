@@ -20,6 +20,10 @@ class AnimationProvider with ChangeNotifier {
 
   double get getHeight => _height;
 
+  bool _back = false;
+
+  bool get wentBack => _back;
+
   // Future<void> init() async {
   //   _length = await Hive.openBox('sleepData').then((value) => value.length);
   //   setOpacityListLength(_length);
@@ -54,4 +58,9 @@ class AnimationProvider with ChangeNotifier {
   //   _i = i;
   //   notifyListeners();
   // }
+
+  void backPressed(bool pressed) {
+    _back = true;
+    notifyListeners();
+  }
 }

@@ -22,9 +22,17 @@ class SleepDataProvider with ChangeNotifier {
 
   List get getInitialList => [];
 
-  // List wholeList = [];
+  List wholeList = [];
 
-  // List get getWholeList => wholeList;
+  int _i = 0;
+
+  int get getIndex => _i;
+
+  set setWholeList(List<SleepData>? sleepData) {
+    wholeList.add(sleepData);
+  }
+
+  List get getWholeList => wholeList;
 
   void setSleepDataList({@required List<SleepData>? sleepData}) {
     _sleepDataList = sleepData!;
@@ -69,10 +77,10 @@ class SleepDataProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  // void setWholeListToEmpty() {
-  //   wholeList.clear();
-  //   notifyListeners();
-  // }
+  void setWholeListToEmpty() {
+    wholeList.clear();
+    notifyListeners();
+  }
 
   // void setWholeList(List<SleepData> sleepData) {
   //   wholeList.add(sleepData);
@@ -82,6 +90,11 @@ class SleepDataProvider with ChangeNotifier {
   void dontUpdateSleepData() {
     SleepData sleepData = SleepData(date: _sleepDataList[0].date);
     _sleepDataList = [sleepData];
+    notifyListeners();
+  }
+
+  void itemIndex(int i) {
+    _i = i;
     notifyListeners();
   }
 }
