@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:zzzleep/functions/sleepdatachart.dart';
+import 'package:zzzleep/providers/sleepdataprovider.dart';
 
 import '../functions/sleepconverter.dart';
 
@@ -21,7 +23,7 @@ class _SleepChartState extends State<SleepChart> {
   String dateMin = '';
   String firstDate = '';
   double firstKg = 0;
-  double opacity = 0;
+  double opacity = 1;
   List<SleepChartData> chartData = [];
   double fontSize = 21;
 // Future getChartData()async{
@@ -30,7 +32,6 @@ class _SleepChartState extends State<SleepChart> {
 
   @override
   void initState() {
-    chartData = SleepInput.chartData();
     _tooltipBehavior = TooltipBehavior(enable: true, shared: true);
 
     super.initState();
@@ -38,6 +39,8 @@ class _SleepChartState extends State<SleepChart> {
 
   @override
   Widget build(BuildContext context) {
+    // var sleepDataProvider = Provider.of<SleepDataProvider>(context);
+    chartData = SleepInput.chartData();
     return Center(
       child: Padding(
         padding: const EdgeInsets.only(right: 15.0),
@@ -81,14 +84,14 @@ class _SleepChartState extends State<SleepChart> {
                   edgeLabelPlacement: EdgeLabelPlacement.hide,
                 ),
                 series: <ChartSeries>[
-                  AreaSeries<SleepChartData, String>(
+                  SplineAreaSeries<SleepChartData, String>(
                     enableTooltip: true,
                     name: 'hours',
                     animationDuration: 1500,
                     color: indigo.withOpacity(0.7),
                     borderColor: Colors.white,
                     borderWidth: 2,
-                    borderDrawMode: BorderDrawMode.all,
+                    borderDrawMode: BorderDrawMode.top,
                     dataSource: chartData,
                     xValueMapper: (SleepChartData date, _) => date.date,
                     yValueMapper: (SleepChartData hours, _) => hours.hours,
@@ -128,7 +131,7 @@ class Average extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 260,
+      width: 200,
       padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(22),
@@ -150,14 +153,14 @@ class Average extends StatelessWidget {
             width: 10,
           ),
           Container(
-            width: 170,
+            width: 100,
             padding: EdgeInsets.all(8),
             alignment: Alignment.center,
             decoration: BoxDecoration(
                 color: Colors.white, borderRadius: BorderRadius.circular(20)),
             child: Text(
-              'hrs/per day',
-              style: TextStyle(fontSize: 21, color: color),
+              '10:39',
+              style: TextStyle(fontSize: 18, color: color),
             ),
           ),
         ],

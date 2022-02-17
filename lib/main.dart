@@ -22,57 +22,58 @@ void main() async {
     ],
     child: MaterialApp(
       theme: ThemeData(
-          primaryColor: Colors.indigo[900],
-          textSelectionTheme: TextSelectionThemeData(
-              cursorColor: Colors.indigo[900],
-              selectionColor: Colors.indigo[900],
-              selectionHandleColor: Colors.indigo[900]),
-          textButtonTheme: TextButtonThemeData(
-            style: ButtonStyle(
-              foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
-              // textStyle: MaterialStateProperty.all<TextStyle>(
-              //     TextStyle(color: Colors.indigo)),
-              // backgroundColor: MaterialStateProperty.all<Color>(
-              //     Color.fromARGB(255, 95, 60, 146)),
-              // overlayColor: MaterialStateProperty.all<Color>(
-              //   Color.fromARGB(255, 95, 85, 146),
-              // ),
-              // shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-              //   RoundedRectangleBorder(),
-              // ),
-              // side: MaterialStateProperty.all<BorderSide>(BorderSide(
-              //   color: Colors.indigo[900]!,
-              //   width: 3,
-              // ))
-            ),
+        primaryColor: Colors.indigo[900],
+        textSelectionTheme: const TextSelectionThemeData(
+            cursorColor: Colors.white,
+            selectionColor: Colors.white,
+            selectionHandleColor: Colors.white),
+        textButtonTheme: TextButtonThemeData(
+          style: ButtonStyle(
+            foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+            // textStyle: MaterialStateProperty.all<TextStyle>(
+            //     TextStyle(color: Colors.indigo)),
+            // backgroundColor: MaterialStateProperty.all<Color>(
+            //     Color.fromARGB(255, 95, 60, 146)),
+            // overlayColor: MaterialStateProperty.all<Color>(
+            //   Color.fromARGB(255, 95, 85, 146),
+            // ),
+            // shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+            //   RoundedRectangleBorder(),
+            // ),
+            // side: MaterialStateProperty.all<BorderSide>(BorderSide(
+            //   color: Colors.indigo[900]!,
+            //   width: 3,
+            // ))
           ),
-          timePickerTheme: TimePickerThemeData(
-              dialHandColor: Colors.indigo[900],
-              backgroundColor: Colors.indigo[900]!.withOpacity(0.5),
-              dialBackgroundColor: Colors.white,
-              hourMinuteTextColor: Colors.indigo[900],
-              hourMinuteShape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(50)),
-              helpTextStyle: TextStyle(color: Colors.white),
-              hourMinuteColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30)),
-              dayPeriodShape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10)),
-              inputDecorationTheme: InputDecorationTheme(
-                // labelStyle: TextStyle(color: Colors.indigo[900]),
-                contentPadding: EdgeInsets.all(0),
-                border: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.indigo[900]!),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.white),
-                ),
-                // filled: true,
-                // fillColor: Colors.white,
-                // focusColor: Colors.white,
-                // counterStyle: TextStyle(color: Colors.white)
-              ))),
+        ),
+        timePickerTheme: TimePickerThemeData(
+            dialHandColor: Colors.indigo[900],
+            backgroundColor: Colors.indigo[900]!.withOpacity(0.75),
+            dialBackgroundColor: Colors.white,
+            hourMinuteTextColor: Colors.white,
+            hourMinuteShape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+            helpTextStyle: TextStyle(color: Colors.white),
+            entryModeIconColor: Colors.white,
+            hourMinuteColor: Colors.indigo[900],
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+            dayPeriodShape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            inputDecorationTheme: InputDecorationTheme(
+              contentPadding: EdgeInsets.all(0),
+              border: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.indigo[900]!),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.white),
+              ),
+              // filled: true,
+              // fillColor: Colors.white,
+              // focusColor: Colors.white,
+              // counterStyle: TextStyle(color: Colors.white)
+            )),
+      ),
       routes: {
         '/listofdates': (BuildContext context) => ListOfDates(),
         '/settime': (BuildContext context) => SetSleepTime(),

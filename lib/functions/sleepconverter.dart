@@ -152,6 +152,7 @@ class SleepInput {
     List<SleepChartData> chartData = [];
     DateFormat dateFormat = DateFormat('dd.MM.');
     String date = '';
+    bool dontAdd = false;
     for (int i = 0; i < wholeSleepDataList.length; i++) {
       List<SleepData> sleepDataList =
           List<SleepData>.from(wholeSleepDataList[i]);
@@ -159,12 +160,21 @@ class SleepInput {
       double hours = 0;
       int minutes = 0;
       for (int j = 0; j < sleepDataList.length; j++) {
-        minutes += sleepDataList[j].minutes;
-        hours += sleepDataList[j].hours;
-        hours += (minutes / 60);
+        if (sleepDataList[j].fallenAsleep == '--:--' ||
+            sleepDataList[j].wokenUp == '--:--') {
+          dontAdd = true;
+          continue;
+        } else {
+          minutes += sleepDataList[j].minutes;
+          hours += sleepDataList[j].hours;
+          hours += (minutes / 60);
+          dontAdd = false;
+        }
       }
-      date = dateFormat.format(sleepDataList[0].date!);
-      chartData.add(SleepChartData(hours: hours, date: date));
+      if (!dontAdd) {
+        date = dateFormat.format(sleepDataList[0].date!);
+        chartData.add(SleepChartData(hours: hours, date: date));
+      }
     }
     return chartData;
   }

@@ -14,9 +14,11 @@ class TimePicker {
     final newTime = await showTimePicker(
       initialEntryMode: TimePickerEntryMode.input,
       context: context,
+      hourLabelText: '',
+      minuteLabelText: '',
       initialTime: fallenAsleep!
-          ? TimeOfDay(hour: 22, minute: 0)
-          : TimeOfDay(hour: 6, minute: 0),
+          ? const TimeOfDay(hour: 22, minute: 0)
+          : const TimeOfDay(hour: 6, minute: 0),
       // confirmText: 'OK',
       // cancelText: 'Otkaži',
       // helpText: 'Odredi vrijeme',
