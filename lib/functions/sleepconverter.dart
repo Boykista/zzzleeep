@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
+import 'package:zzzleep/functions/sleepdatachart.dart';
 import 'package:zzzleep/models/sleepinput.dart';
 import 'package:intl/intl.dart';
 
@@ -138,5 +139,33 @@ class SleepInput {
     } else {
       return [fallenAsleep, wokenUp];
     }
+  }
+
+  static List<SleepChartData> chartData() {
+    List? wholeSleepDataList = [];
+    final boxData = Hive.box('sleepdata');
+    for (int i = 0; i < boxData.length; i++) {
+      final data = boxData.getAt(i) as List;
+      wholeSleepDataList.add(data);
+    }
+
+    List<SleepChartData> chartData = [];
+    DateFormat dateFormat = DateFormat('dd.MM.');
+    String date = '';
+    for (int i = 0; i < wholeSleepDataList.length; i++) {
+      List<SleepData> sleepDataList =
+          List<SleepData>.from(wholeSleepDataList[i]);
+
+      double hours = 0;
+      int minutes = 0;
+      for (int j = 0; j < sleepDataList.length; j++) {
+        minutes += sleepDataList[j].minutes;
+        hours += sleepDataList[j].hours;
+        hours += (minutes / 60);
+      }
+      date = dateFormat.format(sleepDataList[0].date!);
+      chartData.add(SleepChartData(hours: hours, date: date));
+    }
+    return chartData;
   }
 }

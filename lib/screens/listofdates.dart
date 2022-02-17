@@ -9,6 +9,7 @@ import 'package:zzzleep/models/sleepinput.dart';
 import 'package:zzzleep/parts/sleepfields.dart';
 import 'package:zzzleep/providers/animationprovider.dart';
 import 'package:zzzleep/providers/sleepdataprovider.dart';
+import 'package:zzzleep/screens/chart.dart';
 import 'package:zzzleep/screens/settime.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:delayed_display/delayed_display.dart';
@@ -57,10 +58,11 @@ class SleepDates extends StatefulWidget {
 
 class _SleepDatesState extends State<SleepDates> with TickerProviderStateMixin {
   bool moreThanOneInput = false;
-  AnimationController? _animationController2;
-  Animation<double>? scale2;
-  AnimationController? _animationController; //, _animationController2;
-  Animation<double>? scale; //, scale2;
+  AnimationController? _animationController2,
+      _animationController,
+      _slideController;
+  Animation<double>? scale2, scale;
+  Animation<Offset>? slide, slide2;
   List wholeList = [];
 
   void bottomNavigationCallBack(bool savedInputs) {
@@ -84,6 +86,16 @@ class _SleepDatesState extends State<SleepDates> with TickerProviderStateMixin {
         duration: Duration(seconds: 1));
     scale = Tween<double>(begin: 1.0, end: 0.0).animate(CurvedAnimation(
         parent: _animationController!, curve: Curves.easeOutExpo));
+
+    _slideController = AnimationController(
+        vsync: this,
+        animationBehavior: AnimationBehavior.preserve,
+        duration: Duration(seconds: 1));
+
+    slide = Tween<Offset>(begin: Offset.zero, end: Offset(0, 1)).animate(
+        CurvedAnimation(parent: _slideController!, curve: Curves.easeOutExpo));
+    slide2 = Tween<Offset>(begin: Offset(0, -1), end: Offset.zero).animate(
+        CurvedAnimation(parent: _slideController!, curve: Curves.easeOutExpo));
     super.initState();
   }
 
@@ -92,6 +104,7 @@ class _SleepDatesState extends State<SleepDates> with TickerProviderStateMixin {
     Hive.close();
     _animationController!.dispose();
     _animationController2!.dispose();
+    _slideController!.dispose();
     super.dispose();
   }
 
@@ -121,78 +134,82 @@ class _SleepDatesState extends State<SleepDates> with TickerProviderStateMixin {
                     return SizedBox.expand(
                       child: Stack(
                         children: [
-                          SingleChildScrollView(
-                            child: Column(
-                              children: [
-                                ListView.builder(
-                                  reverse: true,
-                                  shrinkWrap: true,
-                                  physics: const NeverScrollableScrollPhysics(),
-                                  itemBuilder: (BuildContext context, int i) {
-                                    final sleepData = data.getAt(i) as List;
-                                    List<SleepData> sleepInputList =
-                                        List<SleepData>.from(sleepData);
-                                    wholeList.add(sleepInputList);
-                                    sleepDataProvider.setWholeList =
-                                        sleepInputList;
+                          SlideTransition(
+                            position: slide!,
+                            child: SingleChildScrollView(
+                              child: Column(
+                                children: [
+                                  ListView.builder(
+                                    reverse: true,
+                                    shrinkWrap: true,
+                                    physics:
+                                        const NeverScrollableScrollPhysics(),
+                                    itemBuilder: (BuildContext context, int i) {
+                                      final sleepData = data.getAt(i) as List;
+                                      List<SleepData> sleepInputList =
+                                          List<SleepData>.from(sleepData);
+                                      wholeList.add(sleepInputList);
+                                      sleepDataProvider.setWholeList =
+                                          sleepInputList;
 
-                                    print(
-                                        'LENGTH POJEDINACNOG SLEEP INPUTA $sleepInputList: ${sleepInputList.length}');
-                                    SleepData sleepInput =
-                                        SleepData(date: sleepData[0].date);
-                                    // print(
-                                    //     'WHOLEEEEEEEEEEEEEEEEEEEEE ${sleepDataProvider.getWholeList}');
-                                    if (sleepInputList.length > 1) {
-                                      moreThanOneInput = true;
-                                      sleepInput =
-                                          SleepInput.hoursMinutesConverter(
-                                              sleepdata: sleepInputList);
-                                      sleepInput.fallenAsleep =
-                                          SleepInput.fallenAsleepConverter(
-                                              sleepData: sleepInputList);
-                                      sleepInput.wokenUp =
-                                          SleepInput.wokenUpConverter(
-                                              sleepData: sleepInputList);
-                                    } else {
-                                      moreThanOneInput = false;
-                                    }
-                                    String date = SleepInput.dateConverter(
-                                        dateData: sleepInputList[0].date,
-                                        toHive: false);
+                                      print(
+                                          'LENGTH POJEDINACNOG SLEEP INPUTA $sleepInputList: ${sleepInputList.length}');
+                                      SleepData sleepInput =
+                                          SleepData(date: sleepData[0].date);
+                                      // print(
+                                      //     'WHOLEEEEEEEEEEEEEEEEEEEEE ${sleepDataProvider.getWholeList}');
+                                      if (sleepInputList.length > 1) {
+                                        moreThanOneInput = true;
+                                        sleepInput =
+                                            SleepInput.hoursMinutesConverter(
+                                                sleepdata: sleepInputList);
+                                        sleepInput.fallenAsleep =
+                                            SleepInput.fallenAsleepConverter(
+                                                sleepData: sleepInputList);
+                                        sleepInput.wokenUp =
+                                            SleepInput.wokenUpConverter(
+                                                sleepData: sleepInputList);
+                                      } else {
+                                        moreThanOneInput = false;
+                                      }
+                                      String date = SleepInput.dateConverter(
+                                          dateData: sleepInputList[0].date,
+                                          toHive: false);
 
-                                    return DelayedDisplay(
-                                      delay: Duration(
-                                          milliseconds: data.length < 5
-                                              ? i * 700
-                                              : i < data.length - 5
-                                                  ? 0
-                                                  : (i - (data.length - 5)) *
-                                                      700),
-                                      slidingCurve: Curves.bounceOut,
-                                      child: Dates(
-                                        indigo: indigo,
-                                        fontSize: fontSize,
-                                        sleepInput: sleepInput,
-                                        sleepInputList: sleepInputList,
-                                        i: i,
-                                        date: date,
-                                        animationController2:
-                                            _animationController2,
-                                        scale2: scale2,
-                                        wholeList: wholeList,
-                                        animationController:
-                                            _animationController,
-                                        scale: scale,
-                                        callBack: bottomNavigationCallBack,
-                                      ),
-                                    );
-                                  },
-                                  itemCount: data.length,
-                                ),
-                                const SizedBox(
-                                  height: 50,
-                                )
-                              ],
+                                      return DelayedDisplay(
+                                        delay: Duration(
+                                            milliseconds: data.length < 5
+                                                ? i * 700
+                                                : i < data.length - 5
+                                                    ? 0
+                                                    : (i - (data.length - 5)) *
+                                                        700),
+                                        slidingCurve: Curves.bounceOut,
+                                        child: Dates(
+                                          indigo: indigo,
+                                          fontSize: fontSize,
+                                          sleepInput: sleepInput,
+                                          sleepInputList: sleepInputList,
+                                          i: i,
+                                          date: date,
+                                          animationController2:
+                                              _animationController2,
+                                          scale2: scale2,
+                                          wholeList: wholeList,
+                                          animationController:
+                                              _animationController,
+                                          scale: scale,
+                                          callBack: bottomNavigationCallBack,
+                                        ),
+                                      );
+                                    },
+                                    itemCount: data.length,
+                                  ),
+                                  const SizedBox(
+                                    height: 50,
+                                  )
+                                ],
+                              ),
                             ),
                           ),
                           SizedBox.expand(
@@ -206,8 +223,11 @@ class _SleepDatesState extends State<SleepDates> with TickerProviderStateMixin {
                             child: BottomNavigationBarStack(
                                 animationController2: _animationController2,
                                 animationController: _animationController,
+                                slideController: _slideController,
                                 callBack: bottomNavigationCallBack),
                           ),
+                          SlideTransition(
+                              position: slide2!, child: SleepChart())
                         ],
                       ),
                     );
@@ -221,22 +241,23 @@ class _SleepDatesState extends State<SleepDates> with TickerProviderStateMixin {
 }
 
 class Dates extends StatefulWidget {
-  Dates(
-      {Key? key,
-      @required this.indigo,
-      @required this.fontSize,
-      @required this.sleepInput,
-      @required this.sleepInputList,
-      @required this.i,
-      @required this.date,
-      @required this.animationController2,
-      @required this.scale2,
-      @required this.wholeList,
-      @required this.animationController,
-      @required this.scale,
-      @required this.callBack})
-      : super(key: key);
-  AnimationController? animationController; //, _animationController2;
+  Dates({
+    Key? key,
+    @required this.indigo,
+    @required this.fontSize,
+    @required this.sleepInput,
+    @required this.sleepInputList,
+    @required this.i,
+    @required this.date,
+    @required this.animationController2,
+    @required this.scale2,
+    @required this.wholeList,
+    @required this.animationController,
+    @required this.scale,
+    @required this.callBack,
+  }) : super(key: key);
+  AnimationController? animationController, animationController2;
+
   Animation<double>? scale; //, scale2;
   Color? indigo;
   double? fontSize;
@@ -245,7 +266,7 @@ class Dates extends StatefulWidget {
   int? i;
   String? date;
   int? millisecondsDelay;
-  AnimationController? animationController2;
+
   Animation<double>? scale2;
   List? wholeList;
   Function? callBack;
@@ -272,8 +293,6 @@ class _DatesState extends State<Dates> with TickerProviderStateMixin {
     double screenHeight = MediaQuery.of(context).size.height;
     var animationProvider = Provider.of<AnimationProvider>(context);
     var sleepDataProvider = Provider.of<SleepDataProvider>(context);
-
-    print('AAAAAAAAAAAA ${sleepDataProvider.getWholeList}');
     return AnimatedBuilder(
       animation: widget.animationController!,
       builder: ((BuildContext context, Widget? child) => AnimatedOpacity(
@@ -382,9 +401,12 @@ class BottomNavigationBarStack extends StatefulWidget {
       {Key? key,
       this.animationController,
       this.animationController2,
+      this.slideController,
       this.callBack})
       : super(key: key);
-  AnimationController? animationController, animationController2;
+  AnimationController? animationController,
+      animationController2,
+      slideController;
   Function? callBack;
   @override
   _BottomNavigationBarStackState createState() =>
@@ -394,14 +416,7 @@ class BottomNavigationBarStack extends StatefulWidget {
 class _BottomNavigationBarStackState extends State<BottomNavigationBarStack> {
   int currentIndex = 1;
   int currentIndex2 = 0;
-  bool refreshScreen = true;
-  void refresh() {
-    setState(() {
-      currentIndex = 1;
-      currentIndex2 = 0;
-      refreshScreen = false;
-    });
-  }
+  bool chartShown = false;
 
   @override
   Widget build(BuildContext context) {
@@ -449,8 +464,17 @@ class _BottomNavigationBarStackState extends State<BottomNavigationBarStack> {
           floatingActionButton: FloatingActionButton(
               elevation: 0.0,
               backgroundColor: Colors.indigo[900]!.withOpacity(0.95),
-              onPressed: () {},
-              child: const FaIcon(FontAwesomeIcons.chartLine)),
+              onPressed: () {
+                !chartShown
+                    ? widget.slideController!.forward()
+                    : widget.slideController!.reverse();
+                setState(() {
+                  chartShown ? chartShown = false : chartShown = true;
+                });
+              },
+              child: !chartShown
+                  ? const FaIcon(FontAwesomeIcons.chartLine)
+                  : const Icon(Icons.arrow_back_ios_new)),
           bottomNavigationBar: BottomAppBar(
             elevation: 0,
             notchMargin: 6,
