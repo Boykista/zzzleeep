@@ -28,6 +28,10 @@ class SleepDataProvider with ChangeNotifier {
 
   int get getIndex => _i;
 
+  bool _hasFocus = false;
+
+  bool get getFocus => _hasFocus;
+
   set setWholeList(List<SleepData>? sleepData) {
     wholeList.add(sleepData);
   }
@@ -95,6 +99,11 @@ class SleepDataProvider with ChangeNotifier {
 
   void itemIndex(int i) {
     _i = i;
+    notifyListeners();
+  }
+
+  void hasFocus(bool hasFocus) {
+    _hasFocus = hasFocus;
     notifyListeners();
   }
 }

@@ -20,6 +20,8 @@ double fontSize = 21;
 bool moreThanOneInput = false;
 
 class _SetSleepTimeState extends State<SetSleepTime> {
+  FocusNode focusNode = FocusNode();
+
   @override
   void dispose() {
     super.dispose();
@@ -44,7 +46,7 @@ class _SetSleepTimeState extends State<SetSleepTime> {
 
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
-    // double keyboard = MediaQuery.of(context).viewInsets.bottom;
+    print('BUild');
     return sleepDataProvider.getSleepDataList.isNotEmpty
         ? Scaffold(
             extendBody: true,
@@ -109,8 +111,10 @@ class _SetSleepTimeState extends State<SetSleepTime> {
                               height: 30,
                             ),
                             Container(
-                              constraints:
-                                  BoxConstraints(maxHeight: screenHeight * 0.3),
+                              constraints: BoxConstraints(
+                                  maxHeight: focusNode.hasFocus
+                                      ? screenHeight * 0.2
+                                      : screenHeight * 0.32),
                               child: SingleChildScrollView(
                                 child: ListView.builder(
                                     shrinkWrap: true,
@@ -157,11 +161,17 @@ class _SetSleepTimeState extends State<SetSleepTime> {
                                   padding:
                                       const EdgeInsets.fromLTRB(15, 10, 15, 10),
                                   child: TextField(
+                                    focusNode: focusNode,
                                     controller:
                                         sleepDataProvider.getNotesController,
                                     textInputAction: TextInputAction.newline,
                                     maxLines: 20,
-                                    onTap: () {},
+                                    onTap: () {
+                                      sleepDataProvider.hasFocus(true);
+                                    },
+                                    onSubmitted: (value) {
+                                      sleepDataProvider.hasFocus(false);
+                                    },
                                     style: TextStyle(
                                         fontSize: fontSize,
                                         color: Colors.white),

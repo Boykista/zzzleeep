@@ -65,11 +65,11 @@ class _SleepDatesState extends State<SleepDates> with TickerProviderStateMixin {
   Animation<Offset>? slide, slide2;
   List wholeList = [];
 
-  void bottomNavigationCallBack(bool savedInputs) {
-    if (savedInputs) {
-      wholeList = [];
-    }
-  }
+  // void bottomNavigationCallBack(bool savedInputs) {
+  //   if (savedInputs) {
+  //     wholeList = [];
+  //   }
+  // }
 
   @override
   void initState() {
@@ -110,8 +110,6 @@ class _SleepDatesState extends State<SleepDates> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
     var animationProvider =
         Provider.of<AnimationProvider>(context, listen: false);
     var sleepDataProvider =
@@ -199,7 +197,8 @@ class _SleepDatesState extends State<SleepDates> with TickerProviderStateMixin {
                                           animationController:
                                               _animationController,
                                           scale: scale,
-                                          callBack: bottomNavigationCallBack,
+                                          moreThanOneInput: moreThanOneInput,
+                                          // callBack: bottomNavigationCallBack,
                                         ),
                                       );
                                     },
@@ -221,13 +220,17 @@ class _SleepDatesState extends State<SleepDates> with TickerProviderStateMixin {
                           Positioned(
                             bottom: 0,
                             child: BottomNavigationBarStack(
-                                animationController2: _animationController2,
-                                animationController: _animationController,
-                                slideController: _slideController,
-                                callBack: bottomNavigationCallBack),
+                              animationController2: _animationController2,
+                              animationController: _animationController,
+                              slideController: _slideController,
+                              // callBack: bottomNavigationCallBack
+                            ),
                           ),
                           SlideTransition(
-                              position: slide2!, child: SleepChart())
+                              position: slide2!,
+                              child: SleepChart(
+                                wholeList: wholeList,
+                              ))
                         ],
                       ),
                     );
@@ -255,6 +258,7 @@ class Dates extends StatefulWidget {
     @required this.animationController,
     @required this.scale,
     @required this.callBack,
+    @required this.moreThanOneInput,
   }) : super(key: key);
   AnimationController? animationController, animationController2;
 
@@ -266,7 +270,7 @@ class Dates extends StatefulWidget {
   int? i;
   String? date;
   int? millisecondsDelay;
-
+  bool? moreThanOneInput;
   Animation<double>? scale2;
   List? wholeList;
   Function? callBack;
@@ -321,7 +325,7 @@ class _DatesState extends State<Dates> with TickerProviderStateMixin {
                       fontSize: widget.fontSize!,
                       i: widget.i,
                       list: true,
-                      sleepData: moreThanOneInput
+                      sleepData: widget.moreThanOneInput!
                           ? widget.sleepInput
                           : widget.sleepInputList![0],
                     ),
@@ -397,17 +401,17 @@ class _DatesState extends State<Dates> with TickerProviderStateMixin {
 }
 
 class BottomNavigationBarStack extends StatefulWidget {
-  BottomNavigationBarStack(
-      {Key? key,
-      this.animationController,
-      this.animationController2,
-      this.slideController,
-      this.callBack})
-      : super(key: key);
+  BottomNavigationBarStack({
+    Key? key,
+    this.animationController,
+    this.animationController2,
+    this.slideController,
+    // this.callBack
+  }) : super(key: key);
   AnimationController? animationController,
       animationController2,
       slideController;
-  Function? callBack;
+  // Function? callBack;
   @override
   _BottomNavigationBarStackState createState() =>
       _BottomNavigationBarStackState();
@@ -474,7 +478,7 @@ class _BottomNavigationBarStackState extends State<BottomNavigationBarStack> {
               },
               child: !chartShown
                   ? const FaIcon(FontAwesomeIcons.chartLine)
-                  : const Icon(Icons.arrow_back_ios_new)),
+                  : const Icon(Icons.format_list_bulleted_rounded)),
           bottomNavigationBar: BottomAppBar(
             elevation: 0,
             notchMargin: 6,

@@ -178,4 +178,70 @@ class SleepInput {
     }
     return chartData;
   }
+
+  static List calculateAverage() {
+    List? wholeSleepDataList = [];
+    final boxData = Hive.box('sleepdata');
+    int hours = 0;
+    int minutes = 0;
+    double total = 0;
+    int dividerLength = 0;
+    for (int i = 0; i < boxData.length; i++) {
+      final data = boxData.getAt(i) as List;
+      wholeSleepDataList.add(data);
+    }
+    dividerLength = wholeSleepDataList.length;
+    List average = [];
+    for (int i = 0; i < wholeSleepDataList.length; i++) {
+      List<SleepData> sleepDataList =
+          List<SleepData>.from(wholeSleepDataList[i]);
+
+      for (int j = 0; j < sleepDataList.length; j++) {
+        if (sleepDataList[j].fallenAsleep == '--:--' ||
+            sleepDataList[j].wokenUp == '--:--') {
+          dividerLength--;
+          continue;
+        } else {
+          hours += sleepDataList[j].hours;
+          minutes += sleepDataList[j].minutes;
+        }
+      }
+    }
+
+    dividerLength == 0 ? dividerLength = 1 : dividerLength = dividerLength;
+
+    total = (hours + minutes / 60) / dividerLength;
+
+    hours = total.truncate();
+    minutes = ((total - hours) * 60).round();
+
+    // if (minutes > 60) {
+    //   hours += (minutes / 60).truncate();
+    //   minutes = ((minutes / 60 - (minutes / 60).truncate()) * 60).round();
+    // }
+    // if (minutes == 60) {
+    //   minutes = 0;
+    // }
+
+    average = [hours, minutes];
+    return average;
+  }
+
+  static String? pointY({@required double? pointY}) {
+    int hours = 0;
+    int minutes = 0;
+    String point = '';
+    hours = (pointY!).truncate();
+    minutes = ((pointY - hours) * 60).round();
+
+    if (hours == 0) {
+      point = '$minutes min';
+    } else if (minutes == 0) {
+      point = '$hours hrs';
+    } else {
+      point = '$hours:$minutes';
+    }
+
+    return point;
+  }
 }

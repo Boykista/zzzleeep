@@ -7,8 +7,9 @@ import 'package:zzzleep/providers/sleepdataprovider.dart';
 import '../functions/sleepconverter.dart';
 
 class SleepChart extends StatefulWidget {
-  const SleepChart({Key? key}) : super(key: key);
+  SleepChart({Key? key, @required this.wholeList}) : super(key: key);
 
+  List? wholeList;
   @override
   _SleepChartState createState() => _SleepChartState();
 }
@@ -16,7 +17,7 @@ class SleepChart extends StatefulWidget {
 class _SleepChartState extends State<SleepChart> {
   Color indigo = Colors.indigo[900]!;
   late TooltipBehavior _tooltipBehavior;
-  double average = 0;
+  List average = [];
   double max = 0;
   double min = 0;
   String dateMax = '';
@@ -30,9 +31,31 @@ class _SleepChartState extends State<SleepChart> {
 
 // }
 
+  void updateTooltip({@required List? hours, List? minutes}) {
+    _tooltipBehavior =
+        TooltipBehavior(enable: true, shared: true, format: ' $hours:$minutes');
+  }
+
   @override
   void initState() {
-    _tooltipBehavior = TooltipBehavior(enable: true, shared: true);
+    _tooltipBehavior = TooltipBehavior(
+        enable: true,
+        shared: true,
+        animationDuration: 2,
+        tooltipPosition: TooltipPosition.pointer,
+        builder: (dynamic data, dynamic point, dynamic series, int pointIndex,
+            int seriesIndex) {
+          if (point.y is String) {
+            point.y = point.y;
+          } else {
+            point.y = SleepInput.pointY(pointY: point.y);
+          }
+
+          return TooltipAppearence(
+            pointY: point.y,
+            pointX: point.x,
+          );
+        });
 
     super.initState();
   }
@@ -41,6 +64,7 @@ class _SleepChartState extends State<SleepChart> {
   Widget build(BuildContext context) {
     // var sleepDataProvider = Provider.of<SleepDataProvider>(context);
     chartData = SleepInput.chartData();
+    average = SleepInput.calculateAverage();
     return Center(
       child: Padding(
         padding: const EdgeInsets.only(right: 15.0),
@@ -123,11 +147,60 @@ class _SleepChartState extends State<SleepChart> {
   }
 }
 
+class TooltipAppearence extends StatelessWidget {
+  const TooltipAppearence(
+      {Key? key, @required this.pointY, @required this.pointX})
+      : super(key: key);
+
+  final String? pointY;
+  final String? pointX;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+        padding: EdgeInsets.all(8),
+        height: 77,
+        width: 138,
+        child: Column(
+          children: [
+            Text(
+              '$pointX',
+              style: TextStyle(
+                color: Colors.indigo,
+                fontSize: 16,
+              ),
+            ),
+            Divider(
+              color: Colors.white54,
+              thickness: 1,
+            ),
+            Container(
+              // margin: EdgeInsets.fromLTRB(2, 0, 2, 0),
+              padding: EdgeInsets.all(5),
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(10)),
+                  // color: Colors.black12,
+                  // boxShadow: [
+                  //   BoxShadow(
+                  //       color: Colors.black38, blurRadius: 3, spreadRadius: 3)
+                  // ]
+                  gradient: LinearGradient(
+                      colors: [Colors.indigo[900]!, Colors.indigo[700]!])),
+              child: Text(
+                'Sleep time: $pointY',
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+          ],
+        ));
+  }
+}
+
 class Average extends StatelessWidget {
   Average({Key? key, @required this.color, @required this.hrs})
       : super(key: key);
   final Color? color;
-  final double? hrs;
+  final List? hrs;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -159,7 +232,15 @@ class Average extends StatelessWidget {
             decoration: BoxDecoration(
                 color: Colors.white, borderRadius: BorderRadius.circular(20)),
             child: Text(
-              '10:39',
+              hrs![0] == 0 && hrs![1]! > 0
+                  ? '${hrs![1]} min'
+                  : hrs![0] > 0 && hrs![1] == 0
+                      ? '${hrs![0]}'
+                      : hrs![0]! > 0 && hrs![1] > 0
+                          ? hrs![1] < 10
+                              ? '${hrs![0]}:0${hrs![1]}'
+                              : '${hrs![0]}:${hrs![1]}'
+                          : '--:--',
               style: TextStyle(fontSize: 18, color: color),
             ),
           ),
