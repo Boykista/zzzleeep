@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:zzzleep/functions/sleepdatachart.dart';
+import 'package:zzzleep/providers/animationprovider.dart';
 import 'package:zzzleep/providers/sleepdataprovider.dart';
 import '../functions/sleepconverter.dart';
 
@@ -51,89 +52,97 @@ class _SleepChartState extends State<SleepChart> {
 
   @override
   Widget build(BuildContext context) {
-    //chartData = SleepInput.chartData();
+    var animationProvider = Provider.of<AnimationProvider>(context);
     var sleepDataProvider = Provider.of<SleepDataProvider>(context);
-    chartData = sleepDataProvider.getChartData;
-    data = SleepInput.calculateData();
-    max = data['max'];
-    average = data['average'];
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.only(right: 15.0),
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              SfCartesianChart(
-                enableAxisAnimation: true,
-                tooltipBehavior: _tooltipBehavior,
-                primaryXAxis: CategoryAxis(
-                  axisLine: const AxisLine(color: Colors.white, width: 2.5),
-                  arrangeByIndex: true,
-                  labelRotation: 35,
-                  labelStyle: TextStyle(
-                    color: Colors.white,
-                    fontSize: fontSize - 6,
-                  ),
-                  labelPlacement: LabelPlacement.onTicks,
-                  majorGridLines: const MajorGridLines(width: 0),
-                  tickPosition: TickPosition.inside,
-                  visibleMaximum: chartData.length.toDouble() - 1,
-                  visibleMinimum: chartData.length < 8
-                      ? 0
-                      : chartData.length.toDouble() - 8,
+    if (animationProvider.getShowChartData) {
+      chartData = sleepDataProvider.getChartData;
+      data = SleepInput.calculateData();
+      max = data['max'];
+      average = data['average'];
+    }
+
+    return !animationProvider.getShowChartData
+        ? const SizedBox()
+        : Center(
+            child: Padding(
+              padding: const EdgeInsets.only(right: 15.0),
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    SfCartesianChart(
+                      enableAxisAnimation: true,
+                      tooltipBehavior: _tooltipBehavior,
+                      primaryXAxis: CategoryAxis(
+                        axisLine:
+                            const AxisLine(color: Colors.white, width: 2.5),
+                        arrangeByIndex: true,
+                        labelRotation: 35,
+                        labelStyle: TextStyle(
+                          color: Colors.white,
+                          fontSize: fontSize - 6,
+                        ),
+                        labelPlacement: LabelPlacement.onTicks,
+                        majorGridLines: const MajorGridLines(width: 0),
+                        tickPosition: TickPosition.inside,
+                        visibleMaximum: chartData.length.toDouble() - 1,
+                        visibleMinimum: chartData.length < 8
+                            ? 0
+                            : chartData.length.toDouble() - 8,
+                      ),
+                      primaryYAxis: NumericAxis(
+                        title: AxisTitle(
+                            text: 'hours',
+                            textStyle: TextStyle(
+                              color: Colors.white,
+                              fontSize: fontSize - 5,
+                            )),
+                        axisLine:
+                            const AxisLine(color: Colors.white, width: 2.5),
+                        labelStyle: TextStyle(
+                          color: Colors.white,
+                          fontSize: fontSize - 6,
+                        ),
+                        majorTickLines: const MajorTickLines(width: 0),
+                        tickPosition: TickPosition.inside,
+                        majorGridLines: const MajorGridLines(width: 0),
+                        interval: 2,
+                        visibleMaximum: max + 3,
+                        visibleMinimum: 0,
+                        decimalPlaces: 0,
+                        edgeLabelPlacement: EdgeLabelPlacement.hide,
+                      ),
+                      series: <ChartSeries>[
+                        SplineAreaSeries<SleepChartData, String>(
+                          enableTooltip: true,
+                          name: 'hours',
+                          animationDuration: 1500,
+                          color: indigo.withOpacity(0.7),
+                          borderColor: Colors.white,
+                          borderWidth: 2,
+                          borderDrawMode: BorderDrawMode.top,
+                          dataSource: chartData,
+                          xValueMapper: (SleepChartData date, _) => date.date,
+                          yValueMapper: (SleepChartData hours, _) =>
+                              hours.hours,
+                        )
+                      ],
+                      plotAreaBorderWidth: 2,
+                      plotAreaBorderColor: Colors.transparent,
+                      zoomPanBehavior: ZoomPanBehavior(
+                          enablePanning: true, zoomMode: ZoomMode.x),
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Average(color: indigo, hrs: average),
+                    const SizedBox(
+                      height: 25,
+                    )
+                  ],
                 ),
-                primaryYAxis: NumericAxis(
-                  title: AxisTitle(
-                      text: 'hours',
-                      textStyle: TextStyle(
-                        color: Colors.white,
-                        fontSize: fontSize - 5,
-                      )),
-                  axisLine: const AxisLine(color: Colors.white, width: 2.5),
-                  labelStyle: TextStyle(
-                    color: Colors.white,
-                    fontSize: fontSize - 6,
-                  ),
-                  majorTickLines: const MajorTickLines(width: 0),
-                  tickPosition: TickPosition.inside,
-                  majorGridLines: const MajorGridLines(width: 0),
-                  interval: 2,
-                  visibleMaximum: max + 3,
-                  visibleMinimum: 0,
-                  decimalPlaces: 0,
-                  edgeLabelPlacement: EdgeLabelPlacement.hide,
-                ),
-                series: <ChartSeries>[
-                  SplineAreaSeries<SleepChartData, String>(
-                    enableTooltip: true,
-                    name: 'hours',
-                    animationDuration: 1500,
-                    color: indigo.withOpacity(0.7),
-                    borderColor: Colors.white,
-                    borderWidth: 2,
-                    borderDrawMode: BorderDrawMode.top,
-                    dataSource: chartData,
-                    xValueMapper: (SleepChartData date, _) => date.date,
-                    yValueMapper: (SleepChartData hours, _) => hours.hours,
-                  )
-                ],
-                plotAreaBorderWidth: 2,
-                plotAreaBorderColor: Colors.transparent,
-                zoomPanBehavior:
-                    ZoomPanBehavior(enablePanning: true, zoomMode: ZoomMode.x),
               ),
-              const SizedBox(
-                height: 20,
-              ),
-              Average(color: indigo, hrs: average),
-              const SizedBox(
-                height: 25,
-              )
-            ],
-          ),
-        ),
-      ),
-    );
+            ),
+          );
   }
 }
 
@@ -169,11 +178,6 @@ class TooltipAppearence extends StatelessWidget {
               padding: const EdgeInsets.all(5),
               decoration: BoxDecoration(
                   borderRadius: const BorderRadius.all(Radius.circular(10)),
-                  // color: Colors.black12,
-                  // boxShadow: [
-                  //   BoxShadow(
-                  //       color: Colors.black38, blurRadius: 3, spreadRadius: 3)
-                  // ]
                   gradient: LinearGradient(
                       colors: [Colors.indigo[900]!, Colors.indigo[700]!])),
               child: Text(

@@ -24,6 +24,14 @@ class AnimationProvider with ChangeNotifier {
 
   bool get wentBack => _back;
 
+  bool _focus = false;
+
+  bool get getFocus => _focus;
+
+  bool _showChartData = true;
+
+  bool get getShowChartData => _showChartData;
+
   // Future<void> init() async {
   //   _length = await Hive.openBox('sleepData').then((value) => value.length);
   //   setOpacityListLength(_length);
@@ -61,6 +69,16 @@ class AnimationProvider with ChangeNotifier {
 
   void backPressed(bool pressed) {
     _back = true;
+    notifyListeners();
+  }
+
+  void setFocus(bool focus) {
+    _focus = focus;
+    notifyListeners();
+  }
+
+  void showChartData(bool show) {
+    _showChartData = show;
     notifyListeners();
   }
 }

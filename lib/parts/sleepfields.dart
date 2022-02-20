@@ -150,9 +150,9 @@ class Time extends StatelessWidget {
                 if (!hourMinute.contains('--:--')) {
                   sleepDataProvider.calculateHoursMinutes(
                       i: i, hours: hourMinute[0], minutes: hourMinute[1]);
-                  sleepDataProvider.prikaziNulu(prikaziNulu: true);
                 }
               });
+              FocusManager.instance.primaryFocus?.unfocus();
             },
             child: Row(
               children: [
@@ -184,9 +184,11 @@ class Time extends StatelessWidget {
                 if (!hourMinute.contains('--:--')) {
                   sleepDataProvider.calculateHoursMinutes(
                       i: i, hours: hourMinute[0], minutes: hourMinute[1]);
-                  sleepDataProvider.prikaziNulu(prikaziNulu: true);
+                  //sleepDataProvider.prikaziNulu(prikaziNulu: true);
+
                 }
               });
+              FocusManager.instance.primaryFocus?.unfocus();
             },
             child: Row(
               children: [

@@ -26,12 +26,18 @@ class _SetSleepTimeState extends State<SetSleepTime> {
   @override
   void initState() {
     super.initState();
+    var animationProvider =
+        Provider.of<AnimationProvider>(context, listen: false);
     var keyboardVisibilityController = KeyboardVisibilityController();
     keyboardSubscription =
-        keyboardVisibilityController.onChange.listen((bool visible) {
+        keyboardVisibilityController.onChange.listen((bool visible) async {
       setState(() {
         focus ? focus = false : focus = true;
       });
+      if (!focus) {
+        await Future.delayed(const Duration(milliseconds: 50));
+      }
+      animationProvider.setFocus(focus);
     });
   }
 
@@ -47,7 +53,7 @@ class _SetSleepTimeState extends State<SetSleepTime> {
   @override
   Widget build(BuildContext context) {
     var sleepDataProvider = Provider.of<SleepDataProvider>(context);
-
+    var animationProvider = Provider.of<AnimationProvider>(context);
     String date = '';
     if (sleepDataProvider.getSleepDataList.isNotEmpty) {
       date = SleepInput.dateConverter(
@@ -70,7 +76,8 @@ class _SetSleepTimeState extends State<SetSleepTime> {
                 SafeArea(
                   child: Container(
                     alignment: Alignment.center,
-                    margin: const EdgeInsets.fromLTRB(10, 40, 10, 90),
+                    margin: EdgeInsets.fromLTRB(
+                        10, 40, 10, animationProvider.getFocus ? 20 : 90),
                     decoration: BoxDecoration(
                         color: indigo?.withOpacity(0.5),
                         border: Border.all(
@@ -105,9 +112,11 @@ class _SetSleepTimeState extends State<SetSleepTime> {
                             ),
                             Container(
                               constraints: BoxConstraints(
-                                  maxHeight: focus
-                                      ? screenHeight * 0.2
-                                      : screenHeight * 0.32),
+                                  maxHeight: screenHeight > 570
+                                      ? focus
+                                          ? screenHeight * 0.2
+                                          : screenHeight * 0.32
+                                      : 50),
                               child: SingleChildScrollView(
                                 child: ListView.builder(
                                     shrinkWrap: true,
@@ -118,7 +127,6 @@ class _SetSleepTimeState extends State<SetSleepTime> {
                                     itemBuilder: (BuildContext context, int i) {
                                       SleepData sleepData =
                                           sleepDataProvider.getSleepDataList[i];
-
                                       return Column(
                                         children: [
                                           i > 0
@@ -154,6 +162,7 @@ class _SetSleepTimeState extends State<SetSleepTime> {
                                   padding:
                                       const EdgeInsets.fromLTRB(15, 10, 15, 10),
                                   child: TextField(
+                                    autofocus: false,
                                     controller:
                                         sleepDataProvider.getNotesController,
                                     textInputAction: TextInputAction.newline,

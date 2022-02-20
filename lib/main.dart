@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:zzzleep/models/sleepinput.dart';
 import 'package:zzzleep/providers/animationprovider.dart';
@@ -11,13 +12,22 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
   Hive.registerAdapter(SleepDataAdapter());
+  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+    systemNavigationBarColor: Colors.indigo[900]!.withOpacity(0.85),
+    systemNavigationBarDividerColor: Colors.transparent,
+    systemNavigationBarIconBrightness: Brightness.light,
+  ));
   //await Hive.openBox('sleepdata');
   runApp(MultiProvider(
     providers: [
       ChangeNotifierProvider(
           create: (BuildContext context) => SleepDataProvider()),
       ChangeNotifierProvider(
-          create: (BuildContext context) => AnimationProvider()),
+        create: (BuildContext context) => AnimationProvider(),
+      ),
+      ChangeNotifierProvider(
+        create: (BuildContext context) => InitialSleepData(),
+      ),
     ],
     child: MaterialApp(
       theme: ThemeData(
@@ -29,20 +39,6 @@ void main() async {
         textButtonTheme: TextButtonThemeData(
           style: ButtonStyle(
             foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
-            // textStyle: MaterialStateProperty.all<TextStyle>(
-            //     TextStyle(color: Colors.indigo)),
-            // backgroundColor: MaterialStateProperty.all<Color>(
-            //     Color.fromARGB(255, 95, 60, 146)),
-            // overlayColor: MaterialStateProperty.all<Color>(
-            //   Color.fromARGB(255, 95, 85, 146),
-            // ),
-            // shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-            //   RoundedRectangleBorder(),
-            // ),
-            // side: MaterialStateProperty.all<BorderSide>(BorderSide(
-            //   color: Colors.indigo[900]!,
-            //   width: 3,
-            // ))
           ),
         ),
         timePickerTheme: TimePickerThemeData(
@@ -67,10 +63,6 @@ void main() async {
               focusedBorder: const OutlineInputBorder(
                 borderSide: BorderSide(color: Colors.white),
               ),
-              // filled: true,
-              // fillColor: Colors.white,
-              // focusColor: Colors.white,
-              // counterStyle: TextStyle(color: Colors.white)
             )),
       ),
       routes: {

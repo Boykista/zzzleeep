@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:zzzleep/providers/animationprovider.dart';
 import 'package:zzzleep/providers/sleepdataprovider.dart';
 
 class TimePicker {
@@ -9,10 +10,12 @@ class TimePicker {
       @required int? i}) async {
     var sleepDataProvider =
         Provider.of<SleepDataProvider>(context!, listen: false);
+
     String hour = '';
     String minute = '';
     final newTime = await showTimePicker(
       initialEntryMode: TimePickerEntryMode.input,
+      useRootNavigator: false,
       context: context,
       hourLabelText: '',
       minuteLabelText: '',

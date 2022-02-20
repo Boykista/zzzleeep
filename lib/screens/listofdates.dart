@@ -101,11 +101,6 @@ class _SleepDatesState extends State<SleepDates> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    var animationProvider =
-        Provider.of<AnimationProvider>(context, listen: false);
-    var sleepDataProvider =
-        Provider.of<SleepDataProvider>(context, listen: false);
-
     return FutureBuilder(
         future: Hive.openBox('sleepdata'),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -117,6 +112,11 @@ class _SleepDatesState extends State<SleepDates> with TickerProviderStateMixin {
               return ValueListenableBuilder<Box<dynamic>>(
                   valueListenable: SleepData.getBox().listenable(),
                   builder: (context, value, _) {
+                    var animationProvider =
+                        Provider.of<AnimationProvider>(context, listen: false);
+                    // ignore: unused_local_variable
+                    var initialSleepData =
+                        Provider.of<InitialSleepData>(context);
                     final data = Hive.box('sleepdata');
                     animationProvider.setOpacityListLength(data.length);
                     wholeList.clear();
@@ -125,76 +125,78 @@ class _SleepDatesState extends State<SleepDates> with TickerProviderStateMixin {
                         children: [
                           SlideTransition(
                             position: slide!,
-                            child: SingleChildScrollView(
-                              child: Column(
-                                children: [
-                                  ListView.builder(
-                                    reverse: true,
-                                    shrinkWrap: true,
-                                    physics:
-                                        const NeverScrollableScrollPhysics(),
-                                    itemBuilder: (BuildContext context, int i) {
-                                      final sleepData = data.getAt(i) as List;
-                                      List<SleepData> sleepInputList =
-                                          List<SleepData>.from(sleepData);
-                                      wholeList.add(sleepInputList);
-                                      sleepDataProvider.setWholeList =
-                                          sleepInputList;
-                                      SleepData sleepInput =
-                                          SleepData(date: sleepData[0].date);
-                                      if (sleepInputList.length > 1) {
-                                        moreThanOneInput = true;
-                                        sleepInput =
-                                            SleepInput.hoursMinutesConverter(
-                                                sleepdata: sleepInputList);
-                                        sleepInput.fallenAsleep =
-                                            SleepInput.fallenAsleepConverter(
-                                                sleepData: sleepInputList);
-                                        sleepInput.wokenUp =
-                                            SleepInput.wokenUpConverter(
-                                                sleepData: sleepInputList);
-                                      } else {
-                                        moreThanOneInput = false;
-                                      }
-                                      String date = SleepInput.dateConverter(
-                                          dateData: sleepInputList[0].date,
-                                          toHive: false);
-
-                                      return DelayedDisplay(
-                                        delay: Duration(
-                                            milliseconds: data.length < 6
-                                                ? i * 700
-                                                : i < data.length - 6
-                                                    ? 0
-                                                    : (i -
-                                                            (data.length - 6) +
-                                                            1) *
-                                                        700),
-                                        slidingCurve: Curves.bounceOut,
-                                        child: Dates(
-                                          indigo: indigo,
-                                          fontSize: fontSize,
-                                          sleepInput: sleepInput,
-                                          sleepInputList: sleepInputList,
-                                          i: i,
-                                          date: date,
-                                          animationController2:
-                                              _animationController2,
-                                          scale2: scale2,
-                                          wholeList: wholeList,
-                                          animationController:
-                                              _animationController,
-                                          scale: scale,
-                                          moreThanOneInput: moreThanOneInput,
-                                        ),
-                                      );
-                                    },
-                                    itemCount: data.length,
-                                  ),
-                                  const SizedBox(
-                                    height: 50,
-                                  )
-                                ],
+                            child: SizedBox.expand(
+                              child: SingleChildScrollView(
+                                child: Column(
+                                  children: [
+                                    ListView.builder(
+                                      reverse: true,
+                                      shrinkWrap: true,
+                                      physics:
+                                          const NeverScrollableScrollPhysics(),
+                                      itemBuilder:
+                                          (BuildContext context, int i) {
+                                        final sleepData = data.getAt(i) as List;
+                                        List<SleepData> sleepInputList =
+                                            List<SleepData>.from(sleepData);
+                                        wholeList.add(sleepInputList);
+                                        if (wholeList.length == data.length) {}
+                                        SleepData sleepInput =
+                                            SleepData(date: sleepData[0].date);
+                                        if (sleepInputList.length > 1) {
+                                          moreThanOneInput = true;
+                                          sleepInput =
+                                              SleepInput.hoursMinutesConverter(
+                                                  sleepdata: sleepInputList);
+                                          sleepInput.fallenAsleep =
+                                              SleepInput.fallenAsleepConverter(
+                                                  sleepData: sleepInputList);
+                                          sleepInput.wokenUp =
+                                              SleepInput.wokenUpConverter(
+                                                  sleepData: sleepInputList);
+                                        } else {
+                                          moreThanOneInput = false;
+                                        }
+                                        String date = SleepInput.dateConverter(
+                                            dateData: sleepInputList[0].date,
+                                            toHive: false);
+                                        return DelayedDisplay(
+                                          delay: Duration(
+                                              milliseconds: data.length < 6
+                                                  ? i * 450
+                                                  : i < data.length - 6
+                                                      ? 0
+                                                      : (i -
+                                                              (data.length -
+                                                                  6) +
+                                                              1) *
+                                                          450),
+                                          slidingCurve: Curves.bounceOut,
+                                          child: Dates(
+                                            indigo: indigo,
+                                            fontSize: fontSize,
+                                            sleepInput: sleepInput,
+                                            sleepInputList: sleepInputList,
+                                            i: i,
+                                            date: date,
+                                            animationController2:
+                                                _animationController2,
+                                            scale2: scale2,
+                                            wholeList: wholeList,
+                                            animationController:
+                                                _animationController,
+                                            scale: scale,
+                                            moreThanOneInput: moreThanOneInput,
+                                          ),
+                                        );
+                                      },
+                                      itemCount: data.length,
+                                    ),
+                                    const SizedBox(
+                                      height: 50,
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           ),
@@ -210,6 +212,7 @@ class _SleepDatesState extends State<SleepDates> with TickerProviderStateMixin {
                               animationController2: _animationController2,
                               animationController: _animationController,
                               slideController: _slideController,
+                              wholeList: wholeList,
                             ),
                           ),
                           SlideTransition(
@@ -281,6 +284,7 @@ class _DatesState extends State<Dates> with TickerProviderStateMixin {
     // double screenHeight = MediaQuery.of(context).size.height;
     var animationProvider = Provider.of<AnimationProvider>(context);
     var sleepDataProvider = Provider.of<SleepDataProvider>(context);
+
     return AnimatedBuilder(
       animation: widget.animationController!,
       builder: ((BuildContext context, Widget? child) => AnimatedOpacity(
@@ -303,15 +307,18 @@ class _DatesState extends State<Dates> with TickerProviderStateMixin {
                           borderRadius: BorderRadius.circular(30))),
                   Positioned(
                     top: 55,
-                    width: screenWidth - 40,
-                    left: screenWidth / 2 - 180,
-                    child: ShowData(
-                      fontSize: widget.fontSize!,
-                      i: widget.i,
-                      list: true,
-                      sleepData: widget.moreThanOneInput!
-                          ? widget.sleepInput
-                          : widget.sleepInputList![0],
+                    width: screenWidth,
+                    // left: screenWidth / 2 - 180,
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+                      child: ShowData(
+                        fontSize: widget.fontSize!,
+                        i: widget.i,
+                        list: true,
+                        sleepData: widget.moreThanOneInput!
+                            ? widget.sleepInput
+                            : widget.sleepInputList![0],
+                      ),
                     ),
                   ),
                   Container(
@@ -345,6 +352,7 @@ class _DatesState extends State<Dates> with TickerProviderStateMixin {
                           animationProvider.displayOne(widget.i!);
                           animationProvider.setHeight(true);
                           sleepDataProvider.itemIndex(widget.i!);
+                          animationProvider.showChartData(false);
                           await Future.delayed(
                               const Duration(milliseconds: 1500));
                           widget.animationController!.forward();
@@ -355,6 +363,7 @@ class _DatesState extends State<Dates> with TickerProviderStateMixin {
                           // animationProvider.backPressed(false);
                           await Future.delayed(
                               const Duration(milliseconds: 850));
+                          Hive.close();
                         },
                         child: SizedBox(
                           height: 130,
@@ -387,16 +396,17 @@ class _DatesState extends State<Dates> with TickerProviderStateMixin {
 }
 
 class BottomNavigationBarStack extends StatefulWidget {
-  BottomNavigationBarStack({
-    Key? key,
-    this.animationController,
-    this.animationController2,
-    this.slideController,
-  }) : super(key: key);
+  BottomNavigationBarStack(
+      {Key? key,
+      this.animationController,
+      this.animationController2,
+      this.slideController,
+      @required this.wholeList})
+      : super(key: key);
   AnimationController? animationController,
       animationController2,
       slideController;
-
+  List? wholeList;
   @override
   _BottomNavigationBarStackState createState() =>
       _BottomNavigationBarStackState();
@@ -413,33 +423,36 @@ class _BottomNavigationBarStackState extends State<BottomNavigationBarStack> {
 
     if (sleepDataProvider.getSecondScreen) {
       var animationProvider = Provider.of<AnimationProvider>(context);
-      return AnimatedContainer(
-        duration: const Duration(seconds: 1),
-        width: MediaQuery.of(context).size.width,
-        height: animationProvider.getHeight,
-        child: Row(
-          children: [
-            Expanded(
-                child: BottomAppBarItem(
-              i: 0,
-              animationController: widget.animationController,
-              animationController2: widget.animationController2,
-            )),
-            Expanded(
-                child: BottomAppBarItem(
-              i: 1,
-              animationController: widget.animationController,
-              animationController2: widget.animationController2,
-            )),
-            Expanded(
-                child: BottomAppBarItem(
-              i: 2,
-              animationController: widget.animationController,
-              animationController2: widget.animationController2,
-            )),
-          ],
-        ),
-      );
+      return animationProvider.getFocus
+          ? const SizedBox()
+          : AnimatedContainer(
+              duration: const Duration(seconds: 1),
+              width: MediaQuery.of(context).size.width,
+              height: animationProvider.getHeight,
+              child: Row(
+                children: [
+                  Expanded(
+                      child: BottomAppBarItem(
+                    wholeList: widget.wholeList,
+                    i: 0,
+                    animationController: widget.animationController,
+                    animationController2: widget.animationController2,
+                  )),
+                  Expanded(
+                      child: BottomAppBarItem(
+                    i: 1,
+                    animationController: widget.animationController,
+                    animationController2: widget.animationController2,
+                  )),
+                  Expanded(
+                      child: BottomAppBarItem(
+                    i: 2,
+                    animationController: widget.animationController,
+                    animationController2: widget.animationController2,
+                  )),
+                ],
+              ),
+            );
     } else {
       var animationProvider = Provider.of<AnimationProvider>(context);
       return AnimatedContainer(
@@ -454,6 +467,7 @@ class _BottomNavigationBarStackState extends State<BottomNavigationBarStack> {
               elevation: 0.0,
               backgroundColor: Colors.indigo[900]!.withOpacity(0.95),
               onPressed: () async {
+                animationProvider.showChartData(true);
                 !chartShown
                     ? widget.slideController!.forward()
                     : widget.slideController!.reverse();
@@ -463,7 +477,6 @@ class _BottomNavigationBarStackState extends State<BottomNavigationBarStack> {
                   await Future.delayed(const Duration(seconds: 1));
                   sleepDataProvider.setChartData(false);
                 }
-
                 setState(() {
                   chartShown ? chartShown = false : chartShown = true;
                 });
@@ -474,7 +487,7 @@ class _BottomNavigationBarStackState extends State<BottomNavigationBarStack> {
           bottomNavigationBar: BottomAppBar(
             elevation: 0,
             notchMargin: 6,
-            color: Colors.indigo[900]!.withOpacity(0.95),
+            color: Colors.indigo[900]!.withOpacity(0.85),
             child: const SizedBox(height: 50),
             shape: const CircularNotchedRectangle(),
           ),
@@ -489,11 +502,12 @@ class BottomAppBarItem extends StatefulWidget {
       {Key? key,
       @required this.i,
       @required this.animationController,
-      @required this.animationController2})
+      @required this.animationController2,
+      this.wholeList})
       : super(key: key);
   AnimationController? animationController, animationController2;
   int? i;
-
+  List? wholeList;
   @override
   State<BottomAppBarItem> createState() => _BottomAppBarItemState();
 }
@@ -510,32 +524,25 @@ class _BottomAppBarItemState extends State<BottomAppBarItem> {
         elevation: 0.0,
         backgroundColor: Colors.indigo[900]!.withOpacity(0.85),
         onPressed: () async {
+          var initialSleepData =
+              Provider.of<InitialSleepData>(context, listen: false);
           if (widget.i == 0) {
-            //sleepDataProvider.setWholeListToEmpty();
-            // sleepDataProvider.dontUpdateSleepData();
+            await Hive.openBox('sleepdata');
+            initialSleepData.backButtonPressed(true);
             animationProvider.setHeight(false);
-
             await Future.delayed(const Duration(milliseconds: 850));
             widget.animationController!.reverse();
-            // animationProvider.backPressed(true);
             widget.animationController2!.reverse();
-
             await Future.delayed(const Duration(milliseconds: 850));
-            for (int i = 0;
-                i < sleepDataProvider.getSleepDataList.length;
-                i++) {
-              sleepDataProvider.setFallenAsleep(i: i, fallenAsleep: '--:--');
-              sleepDataProvider.setWokenUp(i: i, wokenUp: '--:--');
-              sleepDataProvider.calculateHoursMinutes(
-                  i: i, hours: 0, minutes: 0);
-            }
             animationProvider.displayAll();
             sleepDataProvider.secondScreen(false);
+            sleepDataProvider.getNotesController.clear();
           } else if (widget.i == 1) {
             SleepData sleepDataPlus =
                 SleepData(date: sleepDataProvider.getSleepDataList[0].date);
             sleepDataProvider.increaseSleepDataList(sleepData: sleepDataPlus);
           } else {
+            await Hive.openBox('sleepdata');
             //sleepDataProvider.setWholeListToEmpty();
             SleepInput.saveInputs(
                 sleepInput: sleepDataProvider.getSleepDataList);
@@ -545,8 +552,12 @@ class _BottomAppBarItemState extends State<BottomAppBarItem> {
             await Future.delayed(const Duration(milliseconds: 850));
             widget.animationController!.reverse();
             await Future.delayed(const Duration(milliseconds: 850));
+            if (sleepDataProvider.getSleepDataList.length > 1) {
+              initialSleepData.moreThanOneInputChange(true);
+            }
             animationProvider.displayAll();
             sleepDataProvider.secondScreen(false);
+            sleepDataProvider.getNotesController.clear();
           }
         },
         child: Icon(
