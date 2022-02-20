@@ -224,9 +224,6 @@ class Hours extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // var sleepDataProvider =
-    //     Provider.of<SleepDataProvider>(context, listen: false);
-
     return Row(children: [
       const Icon(
         Icons.access_time,
@@ -236,8 +233,6 @@ class Hours extends StatelessWidget {
         width: 15,
       ),
       Text(
-        // sleepDataProvider.getPrikaziNulu
-        //     ?
         hours == 0 && minutes! > 0
             ? '$minutes min'
             : hours! > 0 && minutes == 0
@@ -247,7 +242,6 @@ class Hours extends StatelessWidget {
                         ? '$hours:0$minutes'
                         : '$hours:$minutes'
                     : '--:--',
-        // : '--:--',
         style: TextStyle(fontSize: fontSize, color: Colors.white),
       )
     ]);

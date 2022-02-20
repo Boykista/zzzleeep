@@ -5,53 +5,30 @@ import 'package:zzzleep/models/sleepinput.dart';
 import 'package:intl/intl.dart';
 
 class SleepInput {
-  SleepInput() {
-    // openBox();
-  }
-  // void openBox() async {
-  //   await Hive.openBox('sleepdata');
-  // }
-
   static Future addNewDate() async {
-    // await Hive.openBox<SleepData>('sleepdata');
-
     final sleepData = Hive.box('sleepdata');
-
     if (sleepData.isEmpty) {
       SleepData sleepinput = SleepData(date: DateTime.now());
       sleepData.put(sleepinput.keyDate, [sleepinput]);
-      print('DODANO 1');
     } else {
       final lastData = sleepData.getAt(sleepData.length - 1) as List;
       SleepData lastSleepData = lastData[0];
       DateTime today =
           SleepInput.dateConverter(dateData: DateTime.now(), toHive: true);
-
       if (lastSleepData.date!.isBefore(today)) {
         int dayDifference = today.difference(lastSleepData.date!).inDays;
-        print('RAZLIKA U DANIMA: $dayDifference');
         for (int i = 0; i < dayDifference; i++) {
           SleepData newSleepData =
               SleepData(date: lastSleepData.date!.add(Duration(days: i + 1)));
-          print(newSleepData.keyDate);
           sleepData.put(newSleepData.keyDate, [newSleepData]);
         }
-      } else {
-        print('DANAŠNJI DATUM NIJE POSLIJE ZADNJEG IZ BAZE');
-      }
+      } else {}
     }
   }
 
   static Future saveInputs({@required List<SleepData>? sleepInput}) async {
-    // await Hive.openBox<SleepData>('sleepdata');
-    // List sleepList = [];
-    // for (int i = 0; i < sleepList.length; i++) {
-    //   sleepList.add(value)
-    // }
     final sleepData = Hive.box('sleepdata');
-
     sleepData.put(sleepInput?[0].keyDate, sleepInput);
-    print('DDDOOODAAANOOOO $sleepInput');
   }
 
   static dateConverter({@required DateTime? dateData, @required bool? toHive}) {
@@ -134,7 +111,6 @@ class SleepInput {
         hourSlept = 0;
         minSlept = minTil - minFrom;
       }
-      print('SPAVANJE: $hourSlept:$minSlept');
       return [hourSlept, minSlept];
     } else {
       return [fallenAsleep, wokenUp];
@@ -179,13 +155,16 @@ class SleepInput {
     return chartData;
   }
 
-  static List calculateAverage() {
+  static Map calculateData() {
     List? wholeSleepDataList = [];
     final boxData = Hive.box('sleepdata');
     int hours = 0;
     int minutes = 0;
     double total = 0;
     int dividerLength = 0;
+    double max = 0;
+    int maxHours = 0;
+    int maxMinutes = 0;
     for (int i = 0; i < boxData.length; i++) {
       final data = boxData.getAt(i) as List;
       wholeSleepDataList.add(data);
@@ -204,27 +183,28 @@ class SleepInput {
         } else {
           hours += sleepDataList[j].hours;
           minutes += sleepDataList[j].minutes;
+          maxHours += sleepDataList[j].hours;
+          maxMinutes += sleepDataList[j].minutes;
         }
       }
+      if (max < (maxHours + maxMinutes / 60)) {
+        max = (maxHours + maxMinutes / 60);
+      } else {
+        max = max;
+      }
+      maxHours = 0;
+      maxMinutes = 0;
     }
-
     dividerLength == 0 ? dividerLength = 1 : dividerLength = dividerLength;
 
     total = (hours + minutes / 60) / dividerLength;
 
     hours = total.truncate();
     minutes = ((total - hours) * 60).round();
-
-    // if (minutes > 60) {
-    //   hours += (minutes / 60).truncate();
-    //   minutes = ((minutes / 60 - (minutes / 60).truncate()) * 60).round();
-    // }
-    // if (minutes == 60) {
-    //   minutes = 0;
-    // }
-
     average = [hours, minutes];
-    return average;
+    Map calculatedData = {'average': average, 'max': max};
+
+    return calculatedData;
   }
 
   static String? pointY({@required double? pointY}) {

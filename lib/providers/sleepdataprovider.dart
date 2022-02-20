@@ -1,4 +1,6 @@
 import 'package:flutter/cupertino.dart';
+import 'package:zzzleep/functions/sleepconverter.dart';
+import 'package:zzzleep/functions/sleepdatachart.dart';
 import 'package:zzzleep/models/sleepinput.dart';
 
 class SleepDataProvider with ChangeNotifier {
@@ -31,6 +33,10 @@ class SleepDataProvider with ChangeNotifier {
   bool _hasFocus = false;
 
   bool get getFocus => _hasFocus;
+
+  List<SleepChartData> _chartData = [];
+
+  List<SleepChartData> get getChartData => _chartData;
 
   set setWholeList(List<SleepData>? sleepData) {
     wholeList.add(sleepData);
@@ -104,6 +110,16 @@ class SleepDataProvider with ChangeNotifier {
 
   void hasFocus(bool hasFocus) {
     _hasFocus = hasFocus;
+    notifyListeners();
+  }
+
+  void setChartData(bool showAnimation) {
+    if (showAnimation) {
+      _chartData = SleepInput.chartData();
+    } else {
+      _chartData = [];
+    }
+
     notifyListeners();
   }
 }

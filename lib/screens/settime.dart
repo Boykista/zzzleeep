@@ -1,4 +1,4 @@
-import 'package:curved_navigation_bar/curved_navigation_bar.dart';
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:zzzleep/functions/sleepconverter.dart';
@@ -6,6 +6,7 @@ import 'package:zzzleep/models/sleepinput.dart';
 import 'package:zzzleep/parts/sleepfields.dart';
 import 'package:zzzleep/providers/animationprovider.dart';
 import 'package:zzzleep/providers/sleepdataprovider.dart';
+import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 
 class SetSleepTime extends StatefulWidget {
   const SetSleepTime({Key? key}) : super(key: key);
@@ -20,19 +21,33 @@ double fontSize = 21;
 bool moreThanOneInput = false;
 
 class _SetSleepTimeState extends State<SetSleepTime> {
-  FocusNode focusNode = FocusNode();
+  bool focus = false;
+  late StreamSubscription<bool> keyboardSubscription;
+  @override
+  void initState() {
+    super.initState();
+    var keyboardVisibilityController = KeyboardVisibilityController();
+    keyboardSubscription =
+        keyboardVisibilityController.onChange.listen((bool visible) {
+      setState(() {
+        focus ? focus = false : focus = true;
+      });
+    });
+  }
 
   @override
   void dispose() {
     super.dispose();
     var animationProvider =
         Provider.of<AnimationProvider>(context, listen: false);
+    keyboardSubscription.cancel();
     animationProvider.displayAll();
   }
 
   @override
   Widget build(BuildContext context) {
     var sleepDataProvider = Provider.of<SleepDataProvider>(context);
+
     String date = '';
     if (sleepDataProvider.getSleepDataList.isNotEmpty) {
       date = SleepInput.dateConverter(
@@ -46,23 +61,13 @@ class _SetSleepTimeState extends State<SetSleepTime> {
 
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
-    print('BUild');
     return sleepDataProvider.getSleepDataList.isNotEmpty
         ? Scaffold(
             extendBody: true,
             backgroundColor: Colors.transparent,
             body: Stack(
               children: [
-                // Container(
-                //     decoration: const BoxDecoration(
-                //         image: DecorationImage(
-                //             image: AssetImage('images/night.jpg'),
-                //             fit: BoxFit.cover))),
                 SafeArea(
-                  // child: GestureDetector(
-                  //   onHorizontalDragStart: (details) {
-                  //     Navigator.pop(context);
-                  //   },
                   child: Container(
                     alignment: Alignment.center,
                     margin: const EdgeInsets.fromLTRB(10, 40, 10, 90),
@@ -93,18 +98,6 @@ class _SetSleepTimeState extends State<SetSleepTime> {
                             ),
                           ),
                         ),
-                        // Positioned(
-                        //   top: 150,
-                        //   width: width,
-                        //   child: Text(
-                        //     'Notes/Dreams...',
-                        //     style: TextStyle(
-                        //       fontSize: fontSize,
-                        //       color: Colors.white,
-                        //     ),
-                        //     textAlign: TextAlign.center,
-                        //   ),
-                        // ),
                         Column(
                           children: [
                             const SizedBox(
@@ -112,7 +105,7 @@ class _SetSleepTimeState extends State<SetSleepTime> {
                             ),
                             Container(
                               constraints: BoxConstraints(
-                                  maxHeight: focusNode.hasFocus
+                                  maxHeight: focus
                                       ? screenHeight * 0.2
                                       : screenHeight * 0.32),
                               child: SingleChildScrollView(
@@ -161,17 +154,11 @@ class _SetSleepTimeState extends State<SetSleepTime> {
                                   padding:
                                       const EdgeInsets.fromLTRB(15, 10, 15, 10),
                                   child: TextField(
-                                    focusNode: focusNode,
                                     controller:
                                         sleepDataProvider.getNotesController,
                                     textInputAction: TextInputAction.newline,
                                     maxLines: 20,
-                                    onTap: () {
-                                      sleepDataProvider.hasFocus(true);
-                                    },
-                                    onSubmitted: (value) {
-                                      sleepDataProvider.hasFocus(false);
-                                    },
+                                    onTap: () {},
                                     style: TextStyle(
                                         fontSize: fontSize,
                                         color: Colors.white),
@@ -205,61 +192,8 @@ class _SetSleepTimeState extends State<SetSleepTime> {
                     ),
                   ),
                 ),
-                // ),
-                // Positioned(
-                //   top: 70,
-                //   width: width - 40,
-                //   left: width / 2 - 180,
-                //   child: SingleChildScrollView(
-                //     child: ListView.builder(
-                //         shrinkWrap: true,
-                //         physics: const NeverScrollableScrollPhysics(),
-                //         itemCount: sleepDataProvider.getSleepDataList.length,
-                //         itemBuilder: (BuildContext context, int i) {
-                //           SleepData sleepData = sleepDataProvider.getSleepDataList[i];
-                //           return ShowData(
-                //             sleepData: sleepData,
-                //             fontSize: fontSize,
-                //             list: false,
-                //           );
-                //         }),
-                //   ),
-                // ),
               ],
             ),
-            // bottomNavigationBar: CurvedNavigationBar(
-            //   buttonBackgroundColor: Colors.white,
-            //   color: indigo!.withOpacity(0.58),
-            //   backgroundColor: Colors.transparent,
-            //   height: 60,
-            //   index: currentIndex,
-            //   onTap: (index) async {
-            //     setState(() {
-            //       currentIndex = index;
-            //     });
-            //     if (index == 0) {
-            //       SleepData sleepDataPlus = SleepData(
-            //           date: sleepDataProvider.getSleepDataList[0].date);
-            //       sleepDataProvider.increaseSleepDataList(
-            //           sleepData: sleepDataPlus);
-            //     } else if (index == 1) {
-            //       SleepInput.saveInputs(
-            //           sleepInput: sleepDataProvider.getSleepDataList);
-            //     }
-            //   },
-            //   items: [
-            //     Icon(
-            //       Icons.add,
-            //       color: currentIndex == 0 ? Colors.indigo[900] : Colors.white,
-            //       size: 30,
-            //     ),
-            //     Icon(
-            //       Icons.save,
-            //       color: currentIndex == 1 ? Colors.indigo[900] : Colors.white,
-            //       size: 30,
-            //     )
-            //   ],
-            // ),
           )
         : const SizedBox();
   }

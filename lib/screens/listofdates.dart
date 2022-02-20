@@ -1,8 +1,4 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:curved_navigation_bar/curved_navigation_bar.dart';
-import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:zzzleep/functions/sleepconverter.dart';
 import 'package:zzzleep/models/sleepinput.dart';
@@ -65,37 +61,32 @@ class _SleepDatesState extends State<SleepDates> with TickerProviderStateMixin {
   Animation<Offset>? slide, slide2;
   List wholeList = [];
 
-  // void bottomNavigationCallBack(bool savedInputs) {
-  //   if (savedInputs) {
-  //     wholeList = [];
-  //   }
-  // }
-
   @override
   void initState() {
     _animationController2 = AnimationController(
         animationBehavior: AnimationBehavior.preserve,
         vsync: this,
-        duration: Duration(seconds: 1));
+        duration: const Duration(seconds: 1));
     scale2 = Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
         parent: _animationController2!, curve: Curves.easeOutExpo));
 
     _animationController = AnimationController(
         animationBehavior: AnimationBehavior.preserve,
         vsync: this,
-        duration: Duration(seconds: 1));
+        duration: const Duration(seconds: 1));
     scale = Tween<double>(begin: 1.0, end: 0.0).animate(CurvedAnimation(
         parent: _animationController!, curve: Curves.easeOutExpo));
 
     _slideController = AnimationController(
         vsync: this,
         animationBehavior: AnimationBehavior.preserve,
-        duration: Duration(seconds: 1));
+        duration: const Duration(seconds: 1));
 
-    slide = Tween<Offset>(begin: Offset.zero, end: Offset(0, 1)).animate(
+    slide = Tween<Offset>(begin: Offset.zero, end: const Offset(0, 1)).animate(
         CurvedAnimation(parent: _slideController!, curve: Curves.easeOutExpo));
-    slide2 = Tween<Offset>(begin: Offset(0, -1), end: Offset.zero).animate(
-        CurvedAnimation(parent: _slideController!, curve: Curves.easeOutExpo));
+    slide2 = Tween<Offset>(begin: const Offset(0, -1), end: Offset.zero)
+        .animate(CurvedAnimation(
+            parent: _slideController!, curve: Curves.easeOutExpo));
     super.initState();
   }
 
@@ -149,13 +140,8 @@ class _SleepDatesState extends State<SleepDates> with TickerProviderStateMixin {
                                       wholeList.add(sleepInputList);
                                       sleepDataProvider.setWholeList =
                                           sleepInputList;
-
-                                      print(
-                                          'LENGTH POJEDINACNOG SLEEP INPUTA $sleepInputList: ${sleepInputList.length}');
                                       SleepData sleepInput =
                                           SleepData(date: sleepData[0].date);
-                                      // print(
-                                      //     'WHOLEEEEEEEEEEEEEEEEEEEEE ${sleepDataProvider.getWholeList}');
                                       if (sleepInputList.length > 1) {
                                         moreThanOneInput = true;
                                         sleepInput =
@@ -176,11 +162,13 @@ class _SleepDatesState extends State<SleepDates> with TickerProviderStateMixin {
 
                                       return DelayedDisplay(
                                         delay: Duration(
-                                            milliseconds: data.length < 5
+                                            milliseconds: data.length < 6
                                                 ? i * 700
-                                                : i < data.length - 5
+                                                : i < data.length - 6
                                                     ? 0
-                                                    : (i - (data.length - 5)) *
+                                                    : (i -
+                                                            (data.length - 6) +
+                                                            1) *
                                                         700),
                                         slidingCurve: Curves.bounceOut,
                                         child: Dates(
@@ -198,7 +186,6 @@ class _SleepDatesState extends State<SleepDates> with TickerProviderStateMixin {
                                               _animationController,
                                           scale: scale,
                                           moreThanOneInput: moreThanOneInput,
-                                          // callBack: bottomNavigationCallBack,
                                         ),
                                       );
                                     },
@@ -223,7 +210,6 @@ class _SleepDatesState extends State<SleepDates> with TickerProviderStateMixin {
                               animationController2: _animationController2,
                               animationController: _animationController,
                               slideController: _slideController,
-                              // callBack: bottomNavigationCallBack
                             ),
                           ),
                           SlideTransition(
@@ -257,7 +243,6 @@ class Dates extends StatefulWidget {
     @required this.wholeList,
     @required this.animationController,
     @required this.scale,
-    @required this.callBack,
     @required this.moreThanOneInput,
   }) : super(key: key);
   AnimationController? animationController, animationController2;
@@ -273,7 +258,6 @@ class Dates extends StatefulWidget {
   bool? moreThanOneInput;
   Animation<double>? scale2;
   List? wholeList;
-  Function? callBack;
 
   @override
   _DatesState createState() => _DatesState();
@@ -294,7 +278,7 @@ class _DatesState extends State<Dates> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
+    // double screenHeight = MediaQuery.of(context).size.height;
     var animationProvider = Provider.of<AnimationProvider>(context);
     var sleepDataProvider = Provider.of<SleepDataProvider>(context);
     return AnimatedBuilder(
@@ -349,6 +333,8 @@ class _DatesState extends State<Dates> with TickerProviderStateMixin {
                                 MaterialStateProperty.resolveWith((states) {
                               if (states.contains(MaterialState.pressed)) {
                                 return widget.indigo?.withOpacity(0.5);
+                              } else {
+                                return Colors.transparent;
                               }
                             })),
                         onPressed: () async {
@@ -406,12 +392,11 @@ class BottomNavigationBarStack extends StatefulWidget {
     this.animationController,
     this.animationController2,
     this.slideController,
-    // this.callBack
   }) : super(key: key);
   AnimationController? animationController,
       animationController2,
       slideController;
-  // Function? callBack;
+
   @override
   _BottomNavigationBarStackState createState() =>
       _BottomNavigationBarStackState();
@@ -468,10 +453,17 @@ class _BottomNavigationBarStackState extends State<BottomNavigationBarStack> {
           floatingActionButton: FloatingActionButton(
               elevation: 0.0,
               backgroundColor: Colors.indigo[900]!.withOpacity(0.95),
-              onPressed: () {
+              onPressed: () async {
                 !chartShown
                     ? widget.slideController!.forward()
                     : widget.slideController!.reverse();
+                if (!chartShown) {
+                  sleepDataProvider.setChartData(true);
+                } else {
+                  await Future.delayed(const Duration(seconds: 1));
+                  sleepDataProvider.setChartData(false);
+                }
+
                 setState(() {
                   chartShown ? chartShown = false : chartShown = true;
                 });

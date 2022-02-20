@@ -19,18 +19,7 @@ class TimePicker {
       initialTime: fallenAsleep!
           ? const TimeOfDay(hour: 22, minute: 0)
           : const TimeOfDay(hour: 6, minute: 0),
-      // confirmText: 'OK',
-      // cancelText: 'Otkaži',
-      // helpText: 'Odredi vrijeme',
       builder: (BuildContext? context, Widget? child) {
-        // Theme(
-        //   data: ThemeData.light().copyWith(
-        //     colorScheme: ColorScheme.light().copyWith(
-        //       primary: Colors.yellow[800],
-        //     ),
-        //   ),
-        //   child: child,
-        // );
         return MediaQuery(
           data: MediaQuery.of(context!).copyWith(alwaysUse24HourFormat: true),
           child: child!,

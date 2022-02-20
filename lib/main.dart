@@ -5,7 +5,6 @@ import 'package:zzzleep/providers/animationprovider.dart';
 import 'package:zzzleep/providers/sleepdataprovider.dart';
 import 'package:zzzleep/screens/listofdates.dart';
 import 'package:zzzleep/screens/settime.dart';
-import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 void main() async {
@@ -53,7 +52,7 @@ void main() async {
             hourMinuteTextColor: Colors.white,
             hourMinuteShape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
-            helpTextStyle: TextStyle(color: Colors.white),
+            helpTextStyle: const TextStyle(color: Colors.white),
             entryModeIconColor: Colors.white,
             hourMinuteColor: Colors.indigo[900],
             shape:
@@ -61,11 +60,11 @@ void main() async {
             dayPeriodShape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
             inputDecorationTheme: InputDecorationTheme(
-              contentPadding: EdgeInsets.all(0),
+              contentPadding: const EdgeInsets.all(0),
               border: OutlineInputBorder(
                 borderSide: BorderSide(color: Colors.indigo[900]!),
               ),
-              focusedBorder: OutlineInputBorder(
+              focusedBorder: const OutlineInputBorder(
                 borderSide: BorderSide(color: Colors.white),
               ),
               // filled: true,
@@ -76,7 +75,7 @@ void main() async {
       ),
       routes: {
         '/listofdates': (BuildContext context) => ListOfDates(),
-        '/settime': (BuildContext context) => SetSleepTime(),
+        '/settime': (BuildContext context) => const SetSleepTime(),
       },
       initialRoute: '/listofdates',
     ),
