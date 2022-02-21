@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:zzzleep/functions/sleepconverter.dart';
 import 'package:zzzleep/models/sleepinput.dart';
@@ -52,7 +53,8 @@ class SleepDates extends StatefulWidget {
   State<SleepDates> createState() => _SleepDatesState();
 }
 
-class _SleepDatesState extends State<SleepDates> with TickerProviderStateMixin {
+class _SleepDatesState extends State<SleepDates>
+    with TickerProviderStateMixin, WidgetsBindingObserver {
   bool moreThanOneInput = false;
   AnimationController? _animationController2,
       _animationController,
@@ -61,8 +63,16 @@ class _SleepDatesState extends State<SleepDates> with TickerProviderStateMixin {
   Animation<Offset>? slide, slide2;
   List wholeList = [];
 
+  static SystemUiOverlayStyle overlayStyle = SystemUiOverlayStyle(
+    systemNavigationBarColor: Colors.indigo[900],
+    systemNavigationBarIconBrightness: Brightness.light,
+    systemNavigationBarContrastEnforced: true,
+  );
+
   @override
   void initState() {
+    WidgetsBinding.instance!.addObserver(this);
+
     _animationController2 = AnimationController(
         animationBehavior: AnimationBehavior.preserve,
         vsync: this,
@@ -87,7 +97,26 @@ class _SleepDatesState extends State<SleepDates> with TickerProviderStateMixin {
     slide2 = Tween<Offset>(begin: const Offset(0, -1), end: Offset.zero)
         .animate(CurvedAnimation(
             parent: _slideController!, curve: Curves.easeOutExpo));
+
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      SystemChrome.setSystemUIOverlayStyle(overlayStyle);
+    });
     super.initState();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    if (state == AppLifecycleState.detached) {
+      Hive.close();
+      _animationController!.dispose();
+      _animationController2!.dispose();
+      _slideController!.dispose();
+    } else if (state == AppLifecycleState.inactive) {
+      Hive.close();
+    } else if (state == AppLifecycleState.paused) {
+      Hive.close();
+    }
   }
 
   @override
@@ -96,11 +125,13 @@ class _SleepDatesState extends State<SleepDates> with TickerProviderStateMixin {
     _animationController!.dispose();
     _animationController2!.dispose();
     _slideController!.dispose();
+    WidgetsBinding.instance!.removeObserver(this);
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setSystemUIOverlayStyle(overlayStyle);
     return FutureBuilder(
         future: Hive.openBox('sleepdata'),
         builder: (BuildContext context, AsyncSnapshot snapshot) {

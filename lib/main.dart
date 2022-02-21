@@ -5,7 +5,6 @@ import 'package:zzzleep/models/sleepinput.dart';
 import 'package:zzzleep/providers/animationprovider.dart';
 import 'package:zzzleep/providers/sleepdataprovider.dart';
 import 'package:zzzleep/screens/listofdates.dart';
-import 'package:zzzleep/screens/settime.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 void main() async {
@@ -13,11 +12,10 @@ void main() async {
   await Hive.initFlutter();
   Hive.registerAdapter(SleepDataAdapter());
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-    systemNavigationBarColor: Colors.indigo[900],
-    systemNavigationBarIconBrightness: Brightness.light,
-  ));
-  await Future.delayed(Duration(seconds: 2));
-  //await Hive.openBox('sleepdata');
+      systemNavigationBarColor: Colors.indigo[900],
+      systemNavigationBarIconBrightness: Brightness.light,
+      systemNavigationBarContrastEnforced: true));
+  await Future.delayed(const Duration(seconds: 1));
   runApp(MultiProvider(
     providers: [
       ChangeNotifierProvider(
@@ -66,11 +64,7 @@ void main() async {
               ),
             )),
       ),
-      routes: {
-        '/listofdates': (BuildContext context) => ListOfDates(),
-        '/settime': (BuildContext context) => const SetSleepTime(),
-      },
-      initialRoute: '/listofdates',
+      home: ListOfDates(),
     ),
   ));
 }
