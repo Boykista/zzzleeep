@@ -125,6 +125,11 @@ class SleepDataProvider with ChangeNotifier {
   //   _initialSleepData = sleepData!;
   //   notifyListeners();
   // }
+
+  void dereaseSleepDataList({@required int? i}) {
+    _sleepDataList.removeAt(i!);
+    notifyListeners();
+  }
 }
 
 class InitialSleepData with ChangeNotifier {
@@ -132,12 +137,21 @@ class InitialSleepData with ChangeNotifier {
 
   bool get getBackButton => _backButton;
 
+  bool _saveButton = false;
+
+  bool get getSaveButton => _saveButton;
+
   bool _moreThanOneInputChange = false;
 
   bool get getMoreThanOneInputChange => _moreThanOneInputChange;
 
   void backButtonPressed(bool pressed) {
     _backButton = pressed;
+    notifyListeners();
+  }
+
+  void saveButtonPressed(bool pressed) {
+    _saveButton = pressed;
     notifyListeners();
   }
 

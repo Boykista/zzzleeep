@@ -13,10 +13,10 @@ void main() async {
   await Hive.initFlutter();
   Hive.registerAdapter(SleepDataAdapter());
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-    systemNavigationBarColor: Colors.indigo[900]!.withOpacity(0.85),
-    systemNavigationBarDividerColor: Colors.transparent,
+    systemNavigationBarColor: Colors.indigo[900],
     systemNavigationBarIconBrightness: Brightness.light,
   ));
+  await Future.delayed(Duration(seconds: 2));
   //await Hive.openBox('sleepdata');
   runApp(MultiProvider(
     providers: [
@@ -30,6 +30,7 @@ void main() async {
       ),
     ],
     child: MaterialApp(
+      themeMode: ThemeMode.light,
       theme: ThemeData(
         primaryColor: Colors.indigo[900],
         textSelectionTheme: const TextSelectionThemeData(

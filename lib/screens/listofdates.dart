@@ -353,6 +353,7 @@ class _DatesState extends State<Dates> with TickerProviderStateMixin {
                           animationProvider.setHeight(true);
                           sleepDataProvider.itemIndex(widget.i!);
                           animationProvider.showChartData(false);
+                          FocusManager.instance.primaryFocus?.unfocus();
                           await Future.delayed(
                               const Duration(milliseconds: 1500));
                           widget.animationController!.forward();
@@ -546,7 +547,7 @@ class _BottomAppBarItemState extends State<BottomAppBarItem> {
             //sleepDataProvider.setWholeListToEmpty();
             SleepInput.saveInputs(
                 sleepInput: sleepDataProvider.getSleepDataList);
-
+            initialSleepData.saveButtonPressed(true);
             animationProvider.setHeight(false);
             widget.animationController2!.reverse();
             await Future.delayed(const Duration(milliseconds: 850));

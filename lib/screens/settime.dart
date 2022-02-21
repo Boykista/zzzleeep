@@ -46,8 +46,8 @@ class _SetSleepTimeState extends State<SetSleepTime> {
     super.dispose();
     var animationProvider =
         Provider.of<AnimationProvider>(context, listen: false);
-    keyboardSubscription.cancel();
     animationProvider.displayAll();
+    keyboardSubscription.cancel();
   }
 
   @override
@@ -130,9 +130,25 @@ class _SetSleepTimeState extends State<SetSleepTime> {
                                       return Column(
                                         children: [
                                           i > 0
-                                              ? const Divider(
-                                                  color: Colors.indigo,
-                                                  thickness: 1.5,
+                                              ? Stack(
+                                                  alignment: Alignment.center,
+                                                  children: [
+                                                    const Divider(
+                                                      color: Colors.indigo,
+                                                      thickness: 1.5,
+                                                    ),
+                                                    IconButton(
+                                                        onPressed: () {
+                                                          sleepDataProvider
+                                                              .dereaseSleepDataList(
+                                                                  i: i);
+                                                        },
+                                                        icon: const Icon(
+                                                          Icons.remove_circle,
+                                                          color: Colors.white,
+                                                          size: 30,
+                                                        ))
+                                                  ],
                                                 )
                                               : const SizedBox(),
                                           ShowData(
