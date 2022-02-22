@@ -63,11 +63,10 @@ class _SleepDatesState extends State<SleepDates>
   Animation<Offset>? slide, slide2;
   List wholeList = [];
 
-  static SystemUiOverlayStyle overlayStyle = SystemUiOverlayStyle(
-    systemNavigationBarColor: Colors.indigo[900],
-    systemNavigationBarIconBrightness: Brightness.light,
-    systemNavigationBarContrastEnforced: true,
-  );
+  // static SystemUiOverlayStyle overlayStyle = SystemUiOverlayStyle(
+  //   systemNavigationBarColor: Colors.indigo[900],
+  //   systemNavigationBarIconBrightness: Brightness.light,
+  // );
 
   @override
   void initState() {
@@ -98,9 +97,9 @@ class _SleepDatesState extends State<SleepDates>
         .animate(CurvedAnimation(
             parent: _slideController!, curve: Curves.easeOutExpo));
 
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
-      SystemChrome.setSystemUIOverlayStyle(overlayStyle);
-    });
+    // WidgetsBinding.instance!.addPostFrameCallback((_) {
+    //   SystemChrome.setSystemUIOverlayStyle(overlayStyle);
+    // });
     super.initState();
   }
 
@@ -112,10 +111,15 @@ class _SleepDatesState extends State<SleepDates>
       _animationController!.dispose();
       _animationController2!.dispose();
       _slideController!.dispose();
+      // overlayStyle;
     } else if (state == AppLifecycleState.inactive) {
       Hive.close();
+      // overlayStyle;
     } else if (state == AppLifecycleState.paused) {
       Hive.close();
+      //  overlayStyle;
+    } else if (state == AppLifecycleState.resumed) {
+      // overlayStyle;
     }
   }
 
@@ -131,7 +135,7 @@ class _SleepDatesState extends State<SleepDates>
 
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setSystemUIOverlayStyle(overlayStyle);
+    //  SystemChrome.setSystemUIOverlayStyle(overlayStyle);
     return FutureBuilder(
         future: Hive.openBox('sleepdata'),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -315,7 +319,8 @@ class _DatesState extends State<Dates> with TickerProviderStateMixin {
     // double screenHeight = MediaQuery.of(context).size.height;
     var animationProvider = Provider.of<AnimationProvider>(context);
     var sleepDataProvider = Provider.of<SleepDataProvider>(context);
-
+    var initialSleepDataProvider =
+        Provider.of<InitialSleepData>(context, listen: false);
     return AnimatedBuilder(
       animation: widget.animationController!,
       builder: ((BuildContext context, Widget? child) => AnimatedOpacity(
@@ -402,20 +407,30 @@ class _DatesState extends State<Dates> with TickerProviderStateMixin {
                           width: screenWidth - 20,
                         )),
                   ),
-                  Positioned(
-                    left: screenWidth / 2 - 80,
-                    width: 160,
-                    child: Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(10)),
+                  Align(
+                    alignment: Alignment.center,
+                    child: TextButton(
+                      onPressed: () {
+                        SleepInput.dateFormater(true, false);
+                        initialSleepDataProvider.setDateFormat();
+                      },
                       child: Text(
                         widget.date!,
                         style: TextStyle(
                             fontSize: widget.fontSize! + 3,
                             color: Colors.indigo[900]),
                         textAlign: TextAlign.center,
+                      ),
+                      style: ButtonStyle(
+                        padding: MaterialStateProperty.all<EdgeInsets>(
+                            const EdgeInsets.fromLTRB(10, 10, 10, 10)),
+                        backgroundColor:
+                            MaterialStateProperty.all<Color>(Colors.white),
+                        shape: MaterialStateProperty.all<OutlinedBorder>(
+                            RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15))),
+                        textStyle: MaterialStateProperty.all<TextStyle>(
+                            const TextStyle(fontWeight: FontWeight.normal)),
                       ),
                     ),
                   ),

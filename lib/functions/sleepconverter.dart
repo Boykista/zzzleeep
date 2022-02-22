@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
+import 'package:zzzleep/features/sharedpreferences.dart';
 import 'package:zzzleep/functions/sleepdatachart.dart';
 import 'package:zzzleep/models/sleepinput.dart';
 import 'package:intl/intl.dart';
@@ -36,7 +37,7 @@ class SleepInput {
       DateFormat date = DateFormat('yyyy-MM-dd');
       return date.parse((date.format(dateData!)));
     } else {
-      DateFormat date = DateFormat('dd.MM.yyyy.');
+      DateFormat date = SleepInput.dateFormater(false, false)!;
       return date.format(dateData!);
     }
   }
@@ -126,8 +127,8 @@ class SleepInput {
     }
 
     List<SleepChartData> chartData = [];
-    DateFormat dateFormat = DateFormat('dd.MM.');
-    String date = '';
+    // DateFormat dateFormat = DateFormat('dd.MM.');
+    // String date = '';
     bool dontAdd = false;
     for (int i = 0; i < wholeSleepDataList.length; i++) {
       List<SleepData> sleepDataList =
@@ -148,8 +149,9 @@ class SleepInput {
         }
       }
       if (!dontAdd) {
-        date = dateFormat.format(sleepDataList[0].date!);
-        chartData.add(SleepChartData(hours: hours, date: date));
+        // date = dateFormat.format(sleepDataList[0].date!);
+        chartData
+            .add(SleepChartData(hours: hours, date: sleepDataList[0].date));
       }
     }
     return chartData;
@@ -227,5 +229,43 @@ class SleepInput {
     }
 
     return point;
+  }
+
+  static String? pointX({@required DateTime? pointX}) {
+    DateFormat dateFormat = SleepInput.dateFormater(false, true)!;
+    String date = dateFormat.format(pointX!);
+    return date;
+  }
+
+  static DateFormat? dateFormater(bool pressed, bool tooltip) {
+    DateFormat dateFormat = DateFormat('dd/MM/yyyy');
+    int counter = SimplePreferences.getCounter();
+    if (counter > 3) {
+      counter = 0;
+    }
+    if (counter == 0) {
+      dateFormat = DateFormat('dd/MM/yyyy');
+      if (tooltip) {
+        dateFormat = DateFormat('dd/MM');
+      }
+    } else if (counter == 1) {
+      dateFormat = DateFormat('MM/dd/yyyy');
+      if (tooltip) {
+        dateFormat = DateFormat('MM/dd');
+      }
+    } else if (counter == 2) {
+      dateFormat = DateFormat('d.M.yyyy.');
+      if (tooltip) {
+        dateFormat = DateFormat('d.M.');
+      }
+    } else if (counter == 3) {
+      dateFormat = DateFormat('EEEE');
+    }
+    if (pressed) {
+      counter++;
+      SimplePreferences.setCounter(counter: counter);
+    }
+
+    return dateFormat;
   }
 }

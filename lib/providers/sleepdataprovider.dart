@@ -159,4 +159,8 @@ class InitialSleepData with ChangeNotifier {
     _moreThanOneInputChange = more;
     notifyListeners();
   }
+
+  void setDateFormat() {
+    notifyListeners();
+  }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:zzzleep/functions/sleepdatachart.dart';
@@ -40,6 +41,11 @@ class _SleepChartState extends State<SleepChart> {
           } else {
             point.y = SleepInput.pointY(pointY: point.y);
           }
+          if (point.x is String) {
+            point.x = point.x;
+          } else {
+            point.x = SleepInput.pointX(pointX: point.x);
+          }
 
           return TooltipAppearence(
             pointY: point.y,
@@ -54,13 +60,13 @@ class _SleepChartState extends State<SleepChart> {
   Widget build(BuildContext context) {
     var animationProvider = Provider.of<AnimationProvider>(context);
     var sleepDataProvider = Provider.of<SleepDataProvider>(context);
+
     if (animationProvider.getShowChartData) {
       chartData = sleepDataProvider.getChartData;
       data = SleepInput.calculateData();
       max = data['max'];
       average = data['average'];
     }
-
     return !animationProvider.getShowChartData
         ? const SizedBox()
         : Center(
@@ -72,10 +78,10 @@ class _SleepChartState extends State<SleepChart> {
                     SfCartesianChart(
                       enableAxisAnimation: true,
                       tooltipBehavior: _tooltipBehavior,
-                      primaryXAxis: CategoryAxis(
+                      primaryXAxis: DateTimeCategoryAxis(
                         axisLine:
                             const AxisLine(color: Colors.white, width: 2.5),
-                        arrangeByIndex: true,
+                        // arrangeByIndex: true,
                         labelRotation: 35,
                         labelStyle: TextStyle(
                           color: Colors.white,
@@ -84,10 +90,15 @@ class _SleepChartState extends State<SleepChart> {
                         labelPlacement: LabelPlacement.onTicks,
                         majorGridLines: const MajorGridLines(width: 0),
                         tickPosition: TickPosition.inside,
-                        visibleMaximum: chartData.length.toDouble() - 1,
-                        visibleMinimum: chartData.length < 8
-                            ? 0
-                            : chartData.length.toDouble() - 8,
+                        dateFormat: SleepInput.dateFormater(false, true),
+                        visibleMaximum:
+                            chartData.isNotEmpty ? chartData.last.date : null,
+                        visibleMinimum: chartData.isNotEmpty
+                            ? chartData.length < 8
+                                ? chartData.first.date
+                                : chartData.last.date!
+                                    .add(const Duration(days: -7))
+                            : null,
                       ),
                       primaryYAxis: NumericAxis(
                         title: AxisTitle(
@@ -112,7 +123,7 @@ class _SleepChartState extends State<SleepChart> {
                         edgeLabelPlacement: EdgeLabelPlacement.hide,
                       ),
                       series: <ChartSeries>[
-                        SplineAreaSeries<SleepChartData, String>(
+                        SplineAreaSeries<SleepChartData, DateTime>(
                           enableTooltip: true,
                           name: 'hours',
                           animationDuration: 1500,
@@ -163,7 +174,7 @@ class TooltipAppearence extends StatelessWidget {
         child: Column(
           children: [
             Text(
-              '$pointX',
+              pointX!,
               style: const TextStyle(
                 color: Colors.indigo,
                 fontSize: 16,
