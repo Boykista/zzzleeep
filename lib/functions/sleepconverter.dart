@@ -268,4 +268,20 @@ class SleepInput {
 
     return dateFormat;
   }
+
+  static List<bool>? checkError({@required List<SleepData>? sleepData}) {
+    List<bool> error = [];
+    for (int i = 0; i < sleepData!.length; i++) {
+      if (sleepData[i].hours < 0 || sleepData[i].minutes < 0) {
+        error.add(true);
+      } else {
+        if (sleepData[i].fallenAsleep == sleepData[i].wokenUp) {
+          error.add(true);
+        } else {
+          error.add(false);
+        }
+      }
+    }
+    return error;
+  }
 }

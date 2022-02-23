@@ -241,6 +241,11 @@ class _SleepDatesState extends State<SleepDates>
                               child: const SetSleepTime(),
                             ),
                           ),
+                          SlideTransition(
+                              position: slide2!,
+                              child: SleepChart(
+                                wholeList: wholeList,
+                              )),
                           Positioned(
                             bottom: 0,
                             child: BottomNavigationBarStack(
@@ -250,11 +255,6 @@ class _SleepDatesState extends State<SleepDates>
                               wholeList: wholeList,
                             ),
                           ),
-                          SlideTransition(
-                              position: slide2!,
-                              child: SleepChart(
-                                wholeList: wholeList,
-                              ))
                         ],
                       ),
                     );
@@ -591,20 +591,31 @@ class _BottomAppBarItemState extends State<BottomAppBarItem> {
           } else {
             await Hive.openBox('sleepdata');
             //sleepDataProvider.setWholeListToEmpty();
-            SleepInput.saveInputs(
-                sleepInput: sleepDataProvider.getSleepDataList);
-            initialSleepData.saveButtonPressed(true);
-            animationProvider.setHeight(false);
-            widget.animationController2!.reverse();
-            await Future.delayed(const Duration(milliseconds: 850));
-            widget.animationController!.reverse();
-            await Future.delayed(const Duration(milliseconds: 850));
-            if (sleepDataProvider.getSleepDataList.length > 1) {
-              initialSleepData.moreThanOneInputChange(true);
+
+            List<bool>? error = SleepInput.checkError(
+                sleepData: sleepDataProvider.getSleepDataList);
+            if (error!.contains(true)) {
+              for (int i = 0; i < error.length; i++) {
+                sleepDataProvider.setErrorColor(error);
+              }
+            } else {
+              sleepDataProvider.setErrorColor(error);
+
+              SleepInput.saveInputs(
+                  sleepInput: sleepDataProvider.getSleepDataList);
+              initialSleepData.saveButtonPressed(true);
+              animationProvider.setHeight(false);
+              widget.animationController2!.reverse();
+              await Future.delayed(const Duration(milliseconds: 850));
+              widget.animationController!.reverse();
+              await Future.delayed(const Duration(milliseconds: 850));
+              if (sleepDataProvider.getSleepDataList.length > 1) {
+                initialSleepData.moreThanOneInputChange(true);
+              }
+              animationProvider.displayAll();
+              sleepDataProvider.secondScreen(false);
+              sleepDataProvider.getNotesController.clear();
             }
-            animationProvider.displayAll();
-            sleepDataProvider.secondScreen(false);
-            sleepDataProvider.getNotesController.clear();
           }
         },
         child: Icon(

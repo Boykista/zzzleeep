@@ -1,4 +1,4 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:zzzleep/functions/sleepconverter.dart';
 import 'package:zzzleep/functions/sleepdatachart.dart';
 import 'package:zzzleep/models/sleepinput.dart';
@@ -38,6 +38,10 @@ class SleepDataProvider with ChangeNotifier {
 
   List<SleepChartData> get getChartData => _chartData;
 
+  List<Color>? _color = [];
+
+  List<Color>? get getColor => _color;
+
   set setInitialSleepData(List<SleepData> sleepData) {
     _initialSleepData = sleepData;
   }
@@ -50,11 +54,15 @@ class SleepDataProvider with ChangeNotifier {
 
   void setSleepDataList({@required List<SleepData>? sleepData}) {
     _sleepDataList = sleepData!;
+    for (int i = 0; i < sleepData.length; i++) {
+      _color!.add(Colors.white);
+    }
     notifyListeners();
   }
 
   void increaseSleepDataList({@required SleepData? sleepData}) {
     _sleepDataList.add(sleepData!);
+    _color!.add(Colors.white);
     notifyListeners();
   }
 
@@ -128,6 +136,19 @@ class SleepDataProvider with ChangeNotifier {
 
   void dereaseSleepDataList({@required int? i}) {
     _sleepDataList.removeAt(i!);
+    _color!.removeAt(i);
+    notifyListeners();
+  }
+
+  void setErrorColor(List<bool> error) {
+    for (int j = 0; j < _sleepDataList.length; j++) {
+      if (error[j]) {
+        _color![j] = Colors.red[800]!;
+      } else {
+        _color![j] = Colors.white;
+      }
+    }
+
     notifyListeners();
   }
 }

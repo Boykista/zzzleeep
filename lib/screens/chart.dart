@@ -71,7 +71,7 @@ class _SleepChartState extends State<SleepChart> {
         ? const SizedBox()
         : Center(
             child: Padding(
-              padding: const EdgeInsets.only(right: 15.0),
+              padding: const EdgeInsets.only(right: 25.0),
               child: SingleChildScrollView(
                 child: Column(
                   children: [
@@ -81,7 +81,6 @@ class _SleepChartState extends State<SleepChart> {
                       primaryXAxis: DateTimeCategoryAxis(
                         axisLine:
                             const AxisLine(color: Colors.white, width: 2.5),
-                        // arrangeByIndex: true,
                         labelRotation: 35,
                         labelStyle: TextStyle(
                           color: Colors.white,
@@ -101,27 +100,27 @@ class _SleepChartState extends State<SleepChart> {
                             : null,
                       ),
                       primaryYAxis: NumericAxis(
-                        title: AxisTitle(
-                            text: 'hours',
-                            textStyle: TextStyle(
-                              color: Colors.white,
-                              fontSize: fontSize - 5,
-                            )),
-                        axisLine:
-                            const AxisLine(color: Colors.white, width: 2.5),
-                        labelStyle: TextStyle(
-                          color: Colors.white,
-                          fontSize: fontSize - 6,
-                        ),
-                        majorTickLines: const MajorTickLines(width: 0),
-                        tickPosition: TickPosition.inside,
-                        majorGridLines: const MajorGridLines(width: 0),
-                        interval: 2,
-                        visibleMaximum: max + 3,
-                        visibleMinimum: 0,
-                        decimalPlaces: 0,
-                        edgeLabelPlacement: EdgeLabelPlacement.hide,
-                      ),
+                          title: AxisTitle(
+                              text: 'hours',
+                              textStyle: TextStyle(
+                                color: Colors.white,
+                                fontSize: fontSize - 5,
+                              )),
+                          axisLine:
+                              const AxisLine(color: Colors.white, width: 2.5),
+                          labelStyle: TextStyle(
+                            color: Colors.white,
+                            fontSize: fontSize - 6,
+                          ),
+                          majorTickLines: const MajorTickLines(width: 0),
+                          tickPosition: TickPosition.inside,
+                          majorGridLines: const MajorGridLines(width: 0),
+                          interval: 2,
+                          visibleMaximum: max + 3,
+                          visibleMinimum: 0,
+                          decimalPlaces: 0,
+                          edgeLabelPlacement: EdgeLabelPlacement.hide,
+                          maximumLabels: 8),
                       series: <ChartSeries>[
                         SplineAreaSeries<SleepChartData, DateTime>(
                           enableTooltip: true,
@@ -170,7 +169,7 @@ class TooltipAppearence extends StatelessWidget {
     return Container(
         padding: const EdgeInsets.all(8),
         height: 77,
-        width: 138,
+        width: 145,
         child: Column(
           children: [
             Text(

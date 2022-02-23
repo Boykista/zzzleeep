@@ -165,7 +165,9 @@ class Time extends StatelessWidget {
                 ),
                 Text(
                   fallenAsleep!,
-                  style: TextStyle(fontSize: fontSize, color: Colors.white),
+                  style: TextStyle(
+                      fontSize: fontSize,
+                      color: sleepDataProvider.getColor![i!]),
                 )
               ],
             ),
@@ -201,7 +203,9 @@ class Time extends StatelessWidget {
                 ),
                 Text(
                   wokenUp!,
-                  style: TextStyle(fontSize: fontSize, color: Colors.white),
+                  style: TextStyle(
+                      fontSize: fontSize,
+                      color: sleepDataProvider.getColor![i!]),
                 )
               ],
             ),
