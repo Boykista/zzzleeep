@@ -325,7 +325,7 @@ class _DatesState extends State<Dates> with TickerProviderStateMixin {
       animation: widget.animationController!,
       builder: ((BuildContext context, Widget? child) => AnimatedOpacity(
             curve: Curves.easeInExpo,
-            duration: const Duration(seconds: 1),
+            duration: const Duration(milliseconds: 700),
             opacity: animationProvider.getOpacity[widget.i!],
             child: ScaleTransition(
               scale: widget.scale!,
@@ -391,7 +391,7 @@ class _DatesState extends State<Dates> with TickerProviderStateMixin {
                           animationProvider.showChartData(false);
                           FocusManager.instance.primaryFocus?.unfocus();
                           await Future.delayed(
-                              const Duration(milliseconds: 1500));
+                              const Duration(milliseconds: 1000));
                           widget.animationController!.forward();
                           await Future.delayed(
                               const Duration(milliseconds: 350));
@@ -577,12 +577,13 @@ class _BottomAppBarItemState extends State<BottomAppBarItem> {
             await Hive.openBox('sleepdata');
             initialSleepData.backButtonPressed(true);
             animationProvider.setHeight(false);
-            await Future.delayed(const Duration(milliseconds: 850));
-            widget.animationController!.reverse();
             widget.animationController2!.reverse();
+            await Future.delayed(const Duration(milliseconds: 125));
+            widget.animationController!.reverse();
             await Future.delayed(const Duration(milliseconds: 850));
             animationProvider.displayAll();
             sleepDataProvider.secondScreen(false);
+            sleepDataProvider.setInitialColor();
             sleepDataProvider.getNotesController.clear();
           } else if (widget.i == 1) {
             SleepData sleepDataPlus =
@@ -600,13 +601,12 @@ class _BottomAppBarItemState extends State<BottomAppBarItem> {
               }
             } else {
               sleepDataProvider.setErrorColor(error);
-
               SleepInput.saveInputs(
                   sleepInput: sleepDataProvider.getSleepDataList);
               initialSleepData.saveButtonPressed(true);
               animationProvider.setHeight(false);
               widget.animationController2!.reverse();
-              await Future.delayed(const Duration(milliseconds: 850));
+              await Future.delayed(const Duration(milliseconds: 125));
               widget.animationController!.reverse();
               await Future.delayed(const Duration(milliseconds: 850));
               if (sleepDataProvider.getSleepDataList.length > 1) {

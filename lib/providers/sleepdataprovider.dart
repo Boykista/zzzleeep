@@ -148,7 +148,13 @@ class SleepDataProvider with ChangeNotifier {
         _color![j] = Colors.white;
       }
     }
+    notifyListeners();
+  }
 
+  void setInitialColor() {
+    for (int i = 0; i < _sleepDataList.length; i++) {
+      _color![i] = Colors.white;
+    }
     notifyListeners();
   }
 }
