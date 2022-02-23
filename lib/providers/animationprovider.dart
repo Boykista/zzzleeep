@@ -25,7 +25,7 @@ class AnimationProvider with ChangeNotifier {
 
   bool get getFocus => _focus;
 
-  bool _showChartData = true;
+  bool _showChartData = false;
 
   bool get getShowChartData => _showChartData;
 

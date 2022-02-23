@@ -235,13 +235,11 @@ class _SleepDatesState extends State<SleepDates>
                               child: const SetSleepTime(),
                             ),
                           ),
-                          SizedBox.expand(
-                            child: SlideTransition(
-                                position: slide2!,
-                                child: SleepChart(
-                                  wholeList: wholeList,
-                                )),
-                          ),
+                          SlideTransition(
+                              position: slide2!,
+                              child: SleepChart(
+                                wholeList: wholeList,
+                              )),
                           Positioned(
                             bottom: 0,
                             child: BottomNavigationBarStack(
@@ -510,7 +508,6 @@ class _BottomNavigationBarStackState extends State<BottomNavigationBarStack> {
               elevation: 0.0,
               backgroundColor: Colors.indigo[900]!.withOpacity(0.95),
               onPressed: () async {
-                animationProvider.showChartData(true);
                 !chartShown
                     ? widget.slideController!.forward()
                     : widget.slideController!.reverse();
@@ -522,6 +519,7 @@ class _BottomNavigationBarStackState extends State<BottomNavigationBarStack> {
                 }
                 setState(() {
                   chartShown ? chartShown = false : chartShown = true;
+                  animationProvider.showChartData(chartShown);
                 });
               },
               child: !chartShown

@@ -12,7 +12,7 @@ class SleepDataProvider with ChangeNotifier {
 
   // bool get getPrikaziNulu => _prikaziNulu;
 
-  TextEditingController _notesController = TextEditingController();
+  final TextEditingController _notesController = TextEditingController();
 
   TextEditingController get getNotesController => _notesController;
 
@@ -38,7 +38,7 @@ class SleepDataProvider with ChangeNotifier {
 
   List<SleepChartData> get getChartData => _chartData;
 
-  List<Color>? _color = [];
+  final List<Color>? _color = [];
 
   List<Color>? get getColor => _color;
 

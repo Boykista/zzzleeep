@@ -145,7 +145,7 @@ class _SleepChartState extends State<SleepChart> {
                     ),
                     Average(color: indigo, hrs: average),
                     const SizedBox(
-                      height: 25,
+                      height: 110,
                     )
                   ],
                 ),
