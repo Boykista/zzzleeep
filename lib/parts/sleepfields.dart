@@ -85,7 +85,8 @@ class Time extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
-    var sleepDataProvider = Provider.of<SleepDataProvider>(context);
+    var sleepDataProvider =
+        Provider.of<SleepDataProvider>(context, listen: false);
     if (list!) {
       return Column(
         children: [
@@ -141,6 +142,7 @@ class Time extends StatelessWidget {
         children: [
           TextButton(
             onPressed: () {
+              sleepDataProvider.chooseTimeButton(true);
               TimePicker.chooseTime(context: context, fallenAsleep: true, i: i)
                   .then((value) {
                 List? hourMinute = SleepInput.hourCalculator(
@@ -177,6 +179,7 @@ class Time extends StatelessWidget {
           ),
           TextButton(
             onPressed: () {
+              sleepDataProvider.chooseTimeButton(true);
               TimePicker.chooseTime(context: context, fallenAsleep: false, i: i)
                   .then((value) {
                 List? hourMinute = SleepInput.hourCalculator(
@@ -186,8 +189,6 @@ class Time extends StatelessWidget {
                 if (!hourMinute.contains('--:--')) {
                   sleepDataProvider.calculateHoursMinutes(
                       i: i, hours: hourMinute[0], minutes: hourMinute[1]);
-                  //sleepDataProvider.prikaziNulu(prikaziNulu: true);
-
                 }
               });
               FocusManager.instance.primaryFocus?.unfocus();

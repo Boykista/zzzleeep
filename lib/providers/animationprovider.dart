@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:hive/hive.dart';
-
-import '../models/sleepinput.dart';
 
 class AnimationProvider with ChangeNotifier {
   int _length = 0;
@@ -10,7 +7,7 @@ class AnimationProvider with ChangeNotifier {
 
   List<double> get getOpacity => _opacity;
 
-  int _i = 0;
+  final int _i = 0;
 
   int get getIntI => _i;
 
@@ -32,11 +29,6 @@ class AnimationProvider with ChangeNotifier {
 
   bool get getShowChartData => _showChartData;
 
-  // Future<void> init() async {
-  //   _length = await Hive.openBox('sleepData').then((value) => value.length);
-  //   setOpacityListLength(_length);
-  // }
-
   void displayOne(int i) {
     for (int k = 0; k < _length; k++) {
       k == i ? _opacity[k] = 1.0 : _opacity[k] = 0.0;
@@ -49,7 +41,6 @@ class AnimationProvider with ChangeNotifier {
       _opacity.add(1.0);
     }
     _length = _opacity.length;
-    //notifyListeners();
   }
 
   void displayAll() {
@@ -62,10 +53,6 @@ class AnimationProvider with ChangeNotifier {
     display ? _height = 75 : _height = 0;
     notifyListeners();
   }
-  // void setI(int i) {
-  //   _i = i;
-  //   notifyListeners();
-  // }
 
   void backPressed(bool pressed) {
     _back = true;

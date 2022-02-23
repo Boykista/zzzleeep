@@ -42,6 +42,10 @@ class SleepDataProvider with ChangeNotifier {
 
   List<Color>? get getColor => _color;
 
+  bool _chooseTimePressed = false;
+
+  bool get getChooseTimeButton => _chooseTimePressed;
+
   set setInitialSleepData(List<SleepData> sleepData) {
     _initialSleepData = sleepData;
   }
@@ -83,11 +87,6 @@ class SleepDataProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  // void prikaziNulu({@required bool? prikaziNulu}) {
-  //   _prikaziNulu = prikaziNulu!;
-  //   notifyListeners();
-  // }
-
   void setNotes({@required String? notes}) {
     _sleepDataList[0].notes = notes!;
     _notesController.value = _notesController.value.copyWith(text: notes);
@@ -98,17 +97,6 @@ class SleepDataProvider with ChangeNotifier {
     _secondScreen = secondScreen;
     notifyListeners();
   }
-
-  // void setWholeListToEmpty() {
-  //   wholeList.clear();
-  //   notifyListeners();
-  // }
-
-  // void dontUpdateSleepData() {
-  //   SleepData sleepData = SleepData(date: _sleepDataList[0].date);
-  //   _sleepDataList = [sleepData];
-  //   notifyListeners();
-  // }
 
   void itemIndex(int i) {
     _i = i;
@@ -128,11 +116,6 @@ class SleepDataProvider with ChangeNotifier {
     }
     notifyListeners();
   }
-
-  // void initialSleepData({@required List<SleepData>? sleepData}) {
-  //   _initialSleepData = sleepData!;
-  //   notifyListeners();
-  // }
 
   void dereaseSleepDataList({@required int? i}) {
     _sleepDataList.removeAt(i!);
@@ -155,6 +138,11 @@ class SleepDataProvider with ChangeNotifier {
     for (int i = 0; i < _sleepDataList.length; i++) {
       _color![i] = Colors.white;
     }
+    notifyListeners();
+  }
+
+  void chooseTimeButton(bool pressed) {
+    _chooseTimePressed = pressed;
     notifyListeners();
   }
 }

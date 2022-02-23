@@ -32,7 +32,7 @@ class _SetSleepTimeState extends State<SetSleepTime> {
     keyboardSubscription =
         keyboardVisibilityController.onChange.listen((bool visible) async {
       setState(() {
-        focus ? focus = false : focus = true;
+        keyboardVisibilityController.isVisible ? focus = true : focus = false;
       });
       if (!focus) {
         await Future.delayed(const Duration(milliseconds: 50));
@@ -64,9 +64,10 @@ class _SetSleepTimeState extends State<SetSleepTime> {
         moreThanOneInput = false;
       }
     }
-
+    sleepDataProvider.getChooseTimeButton ? focus = false : focus = focus;
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
+
     return sleepDataProvider.getSleepDataList.isNotEmpty
         ? Scaffold(
             extendBody: true,
@@ -110,12 +111,14 @@ class _SetSleepTimeState extends State<SetSleepTime> {
                             const SizedBox(
                               height: 30,
                             ),
-                            Container(
+                            AnimatedContainer(
+                              duration: const Duration(milliseconds: 800),
+                              curve: Curves.easeInOutQuart,
                               constraints: BoxConstraints(
                                   maxHeight: screenHeight > 570
                                       ? focus
-                                          ? screenHeight * 0.2
-                                          : screenHeight * 0.32
+                                          ? screenHeight * 0.0
+                                          : screenHeight * 0.5
                                       : 50),
                               child: SingleChildScrollView(
                                 child: ListView.builder(

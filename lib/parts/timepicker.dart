@@ -30,11 +30,13 @@ class TimePicker {
         );
       },
     );
+    sleepDataProvider.chooseTimeButton(false);
     if (newTime != null) {
       newTime.hour < 10 ? hour = '0${newTime.hour}' : hour = '${newTime.hour}';
       newTime.minute < 10
           ? minute = '0${newTime.minute}'
           : minute = '${newTime.minute}';
+
       if (fallenAsleep!) {
         sleepDataProvider.setFallenAsleep(i: i, fallenAsleep: '$hour:$minute');
       } else {

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:zzzleep/functions/sleepconverter.dart';
 import 'package:zzzleep/models/sleepinput.dart';
@@ -62,11 +61,6 @@ class _SleepDatesState extends State<SleepDates>
   Animation<double>? scale2, scale;
   Animation<Offset>? slide, slide2;
   List wholeList = [];
-
-  // static SystemUiOverlayStyle overlayStyle = SystemUiOverlayStyle(
-  //   systemNavigationBarColor: Colors.indigo[900],
-  //   systemNavigationBarIconBrightness: Brightness.light,
-  // );
 
   @override
   void initState() {
@@ -241,11 +235,13 @@ class _SleepDatesState extends State<SleepDates>
                               child: const SetSleepTime(),
                             ),
                           ),
-                          SlideTransition(
-                              position: slide2!,
-                              child: SleepChart(
-                                wholeList: wholeList,
-                              )),
+                          SizedBox.expand(
+                            child: SlideTransition(
+                                position: slide2!,
+                                child: SleepChart(
+                                  wholeList: wholeList,
+                                )),
+                          ),
                           Positioned(
                             bottom: 0,
                             child: BottomNavigationBarStack(
