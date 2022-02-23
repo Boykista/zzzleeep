@@ -87,10 +87,10 @@ class _SetSleepTimeState extends State<SetSleepTime> {
                         borderRadius: BorderRadius.circular(30)),
                     child: Stack(
                       clipBehavior: Clip.none,
+                      alignment: Alignment.center,
                       children: [
                         Positioned(
                           top: -20,
-                          left: screenWidth / 2 - 80,
                           width: 160,
                           child: Container(
                             padding: const EdgeInsets.all(8),

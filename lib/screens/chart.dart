@@ -100,7 +100,7 @@ class _SleepChartState extends State<SleepChart> {
                       ),
                       primaryYAxis: NumericAxis(
                           title: AxisTitle(
-                              text: 'hours',
+                              text: 'Hours',
                               textStyle: TextStyle(
                                 color: Colors.white,
                                 fontSize: fontSize - 5,
