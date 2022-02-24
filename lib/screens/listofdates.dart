@@ -558,76 +558,94 @@ class _BottomAppBarItemState extends State<BottomAppBarItem> {
   Widget build(BuildContext context) {
     var animationProvider = Provider.of<AnimationProvider>(context);
     var sleepDataProvider = Provider.of<SleepDataProvider>(context);
-    return Scaffold(
-      backgroundColor: Colors.transparent,
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: FloatingActionButton(
-        elevation: 0.0,
-        backgroundColor: Colors.indigo[900]!.withOpacity(0.85),
-        onPressed: () async {
-          var initialSleepData =
-              Provider.of<InitialSleepData>(context, listen: false);
-          if (widget.i == 0) {
-            await Hive.openBox('sleepdata');
-            initialSleepData.backButtonPressed(true);
-            animationProvider.setHeight(false);
-            widget.animationController2!.reverse();
-            await Future.delayed(const Duration(milliseconds: 125));
-            widget.animationController!.reverse();
-            await Future.delayed(const Duration(milliseconds: 850));
-            animationProvider.displayAll();
-            sleepDataProvider.secondScreen(false);
-            sleepDataProvider.setInitialColor();
-            sleepDataProvider.getNotesController.clear();
-          } else if (widget.i == 1) {
-            SleepData sleepDataPlus =
-                SleepData(date: sleepDataProvider.getSleepDataList[0].date);
-            sleepDataProvider.increaseSleepDataList(sleepData: sleepDataPlus);
-          } else {
-            await Hive.openBox('sleepdata');
-            //sleepDataProvider.setWholeListToEmpty();
-
-            List<bool>? error = SleepInput.checkError(
-                sleepData: sleepDataProvider.getSleepDataList);
-            if (error!.contains(true)) {
-              for (int i = 0; i < error.length; i++) {
-                sleepDataProvider.setErrorColor(error);
-              }
-            } else {
-              sleepDataProvider.setErrorColor(error);
-              SleepInput.saveInputs(
-                  sleepInput: sleepDataProvider.getSleepDataList);
-              initialSleepData.saveButtonPressed(true);
+    return WillPopScope(
+      onWillPop: () async {
+        var initialSleepData =
+            Provider.of<InitialSleepData>(context, listen: false);
+        await Hive.openBox('sleepdata');
+        initialSleepData.backButtonPressed(true);
+        animationProvider.setHeight(false);
+        widget.animationController2!.reverse();
+        await Future.delayed(const Duration(milliseconds: 125));
+        widget.animationController!.reverse();
+        await Future.delayed(const Duration(milliseconds: 850));
+        animationProvider.displayAll();
+        sleepDataProvider.secondScreen(false);
+        sleepDataProvider.setInitialColor();
+        sleepDataProvider.getNotesController.clear();
+        return false;
+      },
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+        floatingActionButton: FloatingActionButton(
+          elevation: 0.0,
+          backgroundColor: Colors.indigo[900]!.withOpacity(0.85),
+          onPressed: () async {
+            var initialSleepData =
+                Provider.of<InitialSleepData>(context, listen: false);
+            if (widget.i == 0) {
+              await Hive.openBox('sleepdata');
+              initialSleepData.backButtonPressed(true);
               animationProvider.setHeight(false);
               widget.animationController2!.reverse();
               await Future.delayed(const Duration(milliseconds: 125));
               widget.animationController!.reverse();
               await Future.delayed(const Duration(milliseconds: 850));
-              if (sleepDataProvider.getSleepDataList.length > 1) {
-                initialSleepData.moreThanOneInputChange(true);
-              }
               animationProvider.displayAll();
               sleepDataProvider.secondScreen(false);
+              sleepDataProvider.setInitialColor();
               sleepDataProvider.getNotesController.clear();
+            } else if (widget.i == 1) {
+              SleepData sleepDataPlus =
+                  SleepData(date: sleepDataProvider.getSleepDataList[0].date);
+              sleepDataProvider.increaseSleepDataList(sleepData: sleepDataPlus);
+            } else {
+              await Hive.openBox('sleepdata');
+              //sleepDataProvider.setWholeListToEmpty();
+
+              List<bool>? error = SleepInput.checkError(
+                  sleepData: sleepDataProvider.getSleepDataList);
+              if (error!.contains(true)) {
+                for (int i = 0; i < error.length; i++) {
+                  sleepDataProvider.setErrorColor(error);
+                }
+              } else {
+                sleepDataProvider.setErrorColor(error);
+                SleepInput.saveInputs(
+                    sleepInput: sleepDataProvider.getSleepDataList);
+                initialSleepData.saveButtonPressed(true);
+                animationProvider.setHeight(false);
+                widget.animationController2!.reverse();
+                await Future.delayed(const Duration(milliseconds: 125));
+                widget.animationController!.reverse();
+                await Future.delayed(const Duration(milliseconds: 850));
+                if (sleepDataProvider.getSleepDataList.length > 1) {
+                  initialSleepData.moreThanOneInputChange(true);
+                }
+                animationProvider.displayAll();
+                sleepDataProvider.secondScreen(false);
+                sleepDataProvider.getNotesController.clear();
+              }
             }
-          }
-        },
-        child: Icon(
-          widget.i == 0
-              ? Icons.arrow_back_ios_new
-              : widget.i == 1
-                  ? Icons.add
-                  : Icons.save,
-          color: Colors.white,
-          size: 30,
+          },
+          child: Icon(
+            widget.i == 0
+                ? Icons.arrow_back_ios_new
+                : widget.i == 1
+                    ? Icons.add
+                    : Icons.save,
+            color: Colors.white,
+            size: 30,
+          ),
         ),
-      ),
-      bottomNavigationBar: BottomAppBar(
-        elevation: 0,
-        notchMargin: 6,
-        color: Colors.indigo[900]!.withOpacity(0.85),
-        child: const SizedBox(height: 50),
-        shape: const CircularNotchedRectangle(),
+        bottomNavigationBar: BottomAppBar(
+          elevation: 0,
+          notchMargin: 6,
+          color: Colors.indigo[900]!.withOpacity(0.85),
+          child: const SizedBox(height: 50),
+          shape: const CircularNotchedRectangle(),
+        ),
       ),
     );
   }

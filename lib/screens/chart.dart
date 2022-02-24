@@ -59,7 +59,7 @@ class _SleepChartState extends State<SleepChart> {
   Widget build(BuildContext context) {
     var animationProvider = Provider.of<AnimationProvider>(context);
     var sleepDataProvider = Provider.of<SleepDataProvider>(context);
-
+    double screenWidth = MediaQuery.of(context).size.width;
     if (animationProvider.getShowChartData) {
       chartData = sleepDataProvider.getChartData;
       data = SleepInput.calculateData();
@@ -94,8 +94,8 @@ class _SleepChartState extends State<SleepChart> {
                         visibleMinimum: chartData.isNotEmpty
                             ? chartData.length < 8
                                 ? chartData.first.date
-                                : chartData.last.date!
-                                    .add(const Duration(days: -7))
+                                : chartData.last.date!.add(Duration(
+                                    days: -(screenWidth / 100).round() * 2))
                             : null,
                       ),
                       primaryYAxis: NumericAxis(

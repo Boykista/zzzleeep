@@ -219,7 +219,7 @@ class SleepInput {
     if (hours == 0) {
       point = '$minutes min';
     } else if (minutes == 0) {
-      point = '$hours hrs';
+      point = '$hours h';
     } else {
       if (minutes < 10) {
         point = '$hours:0$minutes';
