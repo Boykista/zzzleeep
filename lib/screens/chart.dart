@@ -78,26 +78,26 @@ class _SleepChartState extends State<SleepChart> {
                       enableAxisAnimation: true,
                       tooltipBehavior: _tooltipBehavior,
                       primaryXAxis: DateTimeCategoryAxis(
-                        axisLine:
-                            const AxisLine(color: Colors.white, width: 2.5),
-                        labelRotation: 35,
-                        labelStyle: TextStyle(
-                          color: Colors.white,
-                          fontSize: fontSize - 6,
-                        ),
-                        labelPlacement: LabelPlacement.onTicks,
-                        majorGridLines: const MajorGridLines(width: 0),
-                        tickPosition: TickPosition.inside,
-                        dateFormat: SleepInput.dateFormater(false, true),
-                        visibleMaximum:
-                            chartData.isNotEmpty ? chartData.last.date : null,
-                        visibleMinimum: chartData.isNotEmpty
-                            ? chartData.length < 8
-                                ? chartData.first.date
-                                : chartData.last.date!.add(Duration(
-                                    days: -(screenWidth / 100).round() * 2))
-                            : null,
-                      ),
+                          axisLine:
+                              const AxisLine(color: Colors.white, width: 2.5),
+                          labelRotation: 35,
+                          labelStyle: TextStyle(
+                            color: Colors.white,
+                            fontSize: fontSize - 6,
+                          ),
+                          labelPlacement: LabelPlacement.onTicks,
+                          majorGridLines: const MajorGridLines(width: 0),
+                          tickPosition: TickPosition.inside,
+                          dateFormat: SleepInput.dateFormater(false, true),
+                          visibleMaximum:
+                              chartData.isNotEmpty ? chartData.last.date : null,
+                          visibleMinimum: chartData.isNotEmpty
+                              ? chartData.length < 8
+                                  ? chartData.first.date
+                                  : chartData.last.date!.add(Duration(
+                                      days: -(screenWidth / 100).round() * 2))
+                              : null,
+                          maximumLabels: (screenWidth / 100).round() * 2),
                       primaryYAxis: NumericAxis(
                           title: AxisTitle(
                               text: 'Hours',

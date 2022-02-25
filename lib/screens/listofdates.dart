@@ -496,41 +496,63 @@ class _BottomNavigationBarStackState extends State<BottomNavigationBarStack> {
             );
     } else {
       var animationProvider = Provider.of<AnimationProvider>(context);
-      return AnimatedContainer(
-        duration: const Duration(seconds: 1),
-        width: MediaQuery.of(context).size.width,
-        height: 75 - animationProvider.getHeight,
-        child: Scaffold(
-          backgroundColor: Colors.transparent,
-          floatingActionButtonLocation:
-              FloatingActionButtonLocation.centerDocked,
-          floatingActionButton: FloatingActionButton(
-              elevation: 0.0,
-              backgroundColor: Colors.indigo[900]!.withOpacity(0.95),
-              onPressed: () async {
-                !chartShown
-                    ? widget.slideController!.forward()
-                    : widget.slideController!.reverse();
-                if (!chartShown) {
-                  sleepDataProvider.setChartData(true);
-                } else {
-                  await Future.delayed(const Duration(seconds: 1));
-                  sleepDataProvider.setChartData(false);
-                }
-                setState(() {
-                  chartShown ? chartShown = false : chartShown = true;
-                  animationProvider.showChartData(chartShown);
-                });
-              },
-              child: !chartShown
-                  ? const FaIcon(FontAwesomeIcons.chartLine)
-                  : const Icon(Icons.format_list_bulleted_rounded)),
-          bottomNavigationBar: BottomAppBar(
-            elevation: 0,
-            notchMargin: 6,
-            color: Colors.indigo[900]!.withOpacity(0.85),
-            child: const SizedBox(height: 50),
-            shape: const CircularNotchedRectangle(),
+      return WillPopScope(
+        onWillPop: () async {
+          if (chartShown) {
+            !chartShown
+                ? widget.slideController!.forward()
+                : widget.slideController!.reverse();
+            if (!chartShown) {
+              sleepDataProvider.setChartData(true);
+            } else {
+              await Future.delayed(const Duration(seconds: 1));
+              sleepDataProvider.setChartData(false);
+            }
+            setState(() {
+              chartShown ? chartShown = false : chartShown = true;
+              animationProvider.showChartData(chartShown);
+            });
+            return false;
+          } else {
+            return true;
+          }
+        },
+        child: AnimatedContainer(
+          duration: const Duration(seconds: 1),
+          width: MediaQuery.of(context).size.width,
+          height: 75 - animationProvider.getHeight,
+          child: Scaffold(
+            backgroundColor: Colors.transparent,
+            floatingActionButtonLocation:
+                FloatingActionButtonLocation.centerDocked,
+            floatingActionButton: FloatingActionButton(
+                elevation: 0.0,
+                backgroundColor: Colors.indigo[900]!.withOpacity(0.95),
+                onPressed: () async {
+                  !chartShown
+                      ? widget.slideController!.forward()
+                      : widget.slideController!.reverse();
+                  if (!chartShown) {
+                    sleepDataProvider.setChartData(true);
+                  } else {
+                    await Future.delayed(const Duration(seconds: 1));
+                    sleepDataProvider.setChartData(false);
+                  }
+                  setState(() {
+                    chartShown ? chartShown = false : chartShown = true;
+                    animationProvider.showChartData(chartShown);
+                  });
+                },
+                child: !chartShown
+                    ? const FaIcon(FontAwesomeIcons.chartLine)
+                    : const Icon(Icons.format_list_bulleted_rounded)),
+            bottomNavigationBar: BottomAppBar(
+              elevation: 0,
+              notchMargin: 6,
+              color: Colors.indigo[900]!.withOpacity(0.85),
+              child: const SizedBox(height: 50),
+              shape: const CircularNotchedRectangle(),
+            ),
           ),
         ),
       );
