@@ -183,7 +183,6 @@ class TooltipAppearence extends StatelessWidget {
               thickness: 1,
             ),
             Container(
-              // margin: EdgeInsets.fromLTRB(2, 0, 2, 0),
               padding: const EdgeInsets.all(5),
               decoration: BoxDecoration(
                   borderRadius: const BorderRadius.all(Radius.circular(10)),

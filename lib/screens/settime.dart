@@ -17,7 +17,6 @@ class SetSleepTime extends StatefulWidget {
 
 Color? indigo = Colors.indigo[900];
 double fontSize = 21;
-//int currentIndex = 0;
 bool moreThanOneInput = false;
 
 class _SetSleepTimeState extends State<SetSleepTime> {
@@ -44,10 +43,6 @@ class _SetSleepTimeState extends State<SetSleepTime> {
   @override
   void dispose() {
     super.dispose();
-    // var animationProvider =
-    //     Provider.of<AnimationProvider>(context, listen: false);
-    // animationProvider.displayAll();
-    print('AAAAAAAa disposed');
     keyboardSubscription.cancel();
   }
 
@@ -66,7 +61,6 @@ class _SetSleepTimeState extends State<SetSleepTime> {
       }
     }
     sleepDataProvider.getChooseTimeButton ? focus = false : focus = focus;
-    double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
 
     return sleepDataProvider.getSleepDataList.isNotEmpty

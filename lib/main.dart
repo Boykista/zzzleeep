@@ -35,7 +35,6 @@ void main() async {
         systemNavigationBarIconBrightness: Brightness.light,
       ),
       child: MaterialApp(
-        // debugShowCheckedModeBanner: false,
         themeMode: ThemeMode.light,
         theme: ThemeData(
           brightness: Brightness.light,

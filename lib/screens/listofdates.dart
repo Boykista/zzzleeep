@@ -501,28 +501,6 @@ class _BottomNavigationBarStackState extends State<BottomNavigationBarStack> {
             );
     } else {
       var animationProvider = Provider.of<AnimationProvider>(context);
-      // return WillPopScope(
-      //   onWillPop: () async {
-      //     if (chartShown) {
-      //       !chartShown
-      //           ? widget.slideController!.forward()
-      //           : widget.slideController!.reverse();
-      //       if (!chartShown) {
-      //         sleepDataProvider.setChartData(true);
-      //       } else {
-      //         await Future.delayed(const Duration(seconds: 1));
-      //         sleepDataProvider.setChartData(false);
-      //       }
-      //       setState(() {
-      //         chartShown ? chartShown = false : chartShown = true;
-      //         animationProvider.showChartData(chartShown);
-      //       });
-      //       return false;
-      //     } else {
-      //       return true;
-      //     }
-      //   },
-      // child:
       return AnimatedContainer(
         duration: const Duration(seconds: 1),
         width: MediaQuery.of(context).size.width,
@@ -582,7 +560,6 @@ class _BottomNavigationBarStackState extends State<BottomNavigationBarStack> {
             ),
           ),
         ),
-        //   ),
       );
     }
   }
@@ -652,8 +629,6 @@ class _BottomAppBarItemState extends State<BottomAppBarItem> {
               sleepDataProvider.increaseSleepDataList(sleepData: sleepDataPlus);
             } else {
               await Hive.openBox('sleepdata');
-              //sleepDataProvider.setWholeListToEmpty();
-
               List<bool>? error = SleepInput.checkError(
                   sleepData: sleepDataProvider.getSleepDataList);
               if (error!.contains(true)) {
