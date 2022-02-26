@@ -458,15 +458,15 @@ class BottomNavigationBarStack extends StatefulWidget {
       _BottomNavigationBarStackState();
 }
 
+bool chartShown = false;
+
 class _BottomNavigationBarStackState extends State<BottomNavigationBarStack> {
   int currentIndex = 1;
   int currentIndex2 = 0;
-  bool chartShown = false;
 
   @override
   Widget build(BuildContext context) {
     var sleepDataProvider = Provider.of<SleepDataProvider>(context);
-
     if (sleepDataProvider.getSecondScreen) {
       var animationProvider = Provider.of<AnimationProvider>(context);
       return animationProvider.getFocus
@@ -501,31 +501,53 @@ class _BottomNavigationBarStackState extends State<BottomNavigationBarStack> {
             );
     } else {
       var animationProvider = Provider.of<AnimationProvider>(context);
-      return WillPopScope(
-        onWillPop: () async {
-          if (chartShown) {
-            !chartShown
-                ? widget.slideController!.forward()
-                : widget.slideController!.reverse();
-            if (!chartShown) {
-              sleepDataProvider.setChartData(true);
+      // return WillPopScope(
+      //   onWillPop: () async {
+      //     if (chartShown) {
+      //       !chartShown
+      //           ? widget.slideController!.forward()
+      //           : widget.slideController!.reverse();
+      //       if (!chartShown) {
+      //         sleepDataProvider.setChartData(true);
+      //       } else {
+      //         await Future.delayed(const Duration(seconds: 1));
+      //         sleepDataProvider.setChartData(false);
+      //       }
+      //       setState(() {
+      //         chartShown ? chartShown = false : chartShown = true;
+      //         animationProvider.showChartData(chartShown);
+      //       });
+      //       return false;
+      //     } else {
+      //       return true;
+      //     }
+      //   },
+      // child:
+      return AnimatedContainer(
+        duration: const Duration(seconds: 1),
+        width: MediaQuery.of(context).size.width,
+        height: 75 - animationProvider.getHeight,
+        child: WillPopScope(
+          onWillPop: () async {
+            if (chartShown) {
+              !chartShown
+                  ? widget.slideController!.forward()
+                  : widget.slideController!.reverse();
+              if (!chartShown) {
+                sleepDataProvider.setChartData(true);
+              } else {
+                await Future.delayed(const Duration(seconds: 1));
+                sleepDataProvider.setChartData(false);
+              }
+              setState(() {
+                chartShown ? chartShown = false : chartShown = true;
+                animationProvider.showChartData(chartShown);
+              });
+              return false;
             } else {
-              await Future.delayed(const Duration(seconds: 1));
-              sleepDataProvider.setChartData(false);
+              return true;
             }
-            setState(() {
-              chartShown ? chartShown = false : chartShown = true;
-              animationProvider.showChartData(chartShown);
-            });
-            return false;
-          } else {
-            return true;
-          }
-        },
-        child: AnimatedContainer(
-          duration: const Duration(seconds: 1),
-          width: MediaQuery.of(context).size.width,
-          height: 75 - animationProvider.getHeight,
+          },
           child: Scaffold(
             backgroundColor: Colors.transparent,
             floatingActionButtonLocation:
@@ -560,6 +582,7 @@ class _BottomNavigationBarStackState extends State<BottomNavigationBarStack> {
             ),
           ),
         ),
+        //   ),
       );
     }
   }

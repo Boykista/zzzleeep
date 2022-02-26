@@ -44,9 +44,10 @@ class _SetSleepTimeState extends State<SetSleepTime> {
   @override
   void dispose() {
     super.dispose();
-    var animationProvider =
-        Provider.of<AnimationProvider>(context, listen: false);
-    animationProvider.displayAll();
+    // var animationProvider =
+    //     Provider.of<AnimationProvider>(context, listen: false);
+    // animationProvider.displayAll();
+    print('AAAAAAAa disposed');
     keyboardSubscription.cancel();
   }
 
