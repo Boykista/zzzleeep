@@ -51,12 +51,9 @@ class SleepInput {
       minutes += sleepdata[i].minutes;
       hours += sleepdata[i].hours;
     }
-    if (minutes > 60) {
+    if (minutes >= 60) {
       hours += (minutes / 60).truncate();
       minutes = ((minutes / 60 - (minutes / 60).truncate()) * 60).round();
-    }
-    if (minutes == 60) {
-      minutes = 0;
     }
     sleepInput.hours = hours;
     sleepInput.minutes = minutes;

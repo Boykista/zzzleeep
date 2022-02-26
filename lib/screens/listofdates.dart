@@ -61,7 +61,7 @@ class _SleepDatesState extends State<SleepDates>
   Animation<double>? scale2, scale;
   Animation<Offset>? slide, slide2;
   List wholeList = [];
-
+  int numberOfNonVisibleAnimation = 6;
   @override
   void initState() {
     WidgetsBinding.instance!.addObserver(this);
@@ -130,6 +130,8 @@ class _SleepDatesState extends State<SleepDates>
   @override
   Widget build(BuildContext context) {
     //  SystemChrome.setSystemUIOverlayStyle(overlayStyle);
+    double screenHeight = MediaQuery.of(context).size.height;
+    numberOfNonVisibleAnimation = (screenHeight / 100).truncate();
     return FutureBuilder(
         future: Hive.openBox('sleepdata'),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -191,13 +193,16 @@ class _SleepDatesState extends State<SleepDates>
                                             toHive: false);
                                         return DelayedDisplay(
                                           delay: Duration(
-                                              milliseconds: data.length < 6
+                                              milliseconds: data.length <
+                                                      numberOfNonVisibleAnimation
                                                   ? i * 450
-                                                  : i < data.length - 6
+                                                  : i <
+                                                          data.length -
+                                                              numberOfNonVisibleAnimation
                                                       ? 0
                                                       : (i -
                                                               (data.length -
-                                                                  6) +
+                                                                  numberOfNonVisibleAnimation) +
                                                               1) *
                                                           450),
                                           slidingCurve: Curves.bounceOut,
