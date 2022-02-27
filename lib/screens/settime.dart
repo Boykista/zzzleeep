@@ -110,11 +110,11 @@ class _SetSleepTimeState extends State<SetSleepTime> {
                               duration: const Duration(milliseconds: 800),
                               curve: Curves.easeInOutQuart,
                               constraints: BoxConstraints(
-                                  maxHeight: screenHeight > 570
-                                      ? focus
-                                          ? screenHeight * 0.0
-                                          : screenHeight * 0.5
-                                      : 50),
+                                  maxHeight: focus
+                                      ? screenHeight * 0.0
+                                      : screenHeight > 1000
+                                          ? 600
+                                          : screenHeight * 0.5),
                               child: SingleChildScrollView(
                                 child: ListView.builder(
                                     shrinkWrap: true,

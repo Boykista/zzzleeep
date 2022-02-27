@@ -21,27 +21,21 @@ class ShowData extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (list!) {
-      return Padding(
-        padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Hours(
-              fontSize: fontSize,
-              hours: sleepData!.hours,
-              minutes: sleepData!.minutes,
-            ),
-            Padding(
-              padding: const EdgeInsets.only(left: 15.0),
-              child: Time(
-                fontSize: fontSize,
-                fallenAsleep: sleepData!.fallenAsleep,
-                wokenUp: sleepData!.wokenUp,
-                list: list,
-              ),
-            )
-          ],
-        ),
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Hours(
+            fontSize: fontSize,
+            hours: sleepData!.hours,
+            minutes: sleepData!.minutes,
+          ),
+          Time(
+            fontSize: fontSize,
+            fallenAsleep: sleepData!.fallenAsleep,
+            wokenUp: sleepData!.wokenUp,
+            list: list,
+          )
+        ],
       );
     } else {
       return Padding(
@@ -89,6 +83,7 @@ class Time extends StatelessWidget {
         Provider.of<SleepDataProvider>(context, listen: false);
     if (list!) {
       return Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Row(
             children: [
@@ -100,7 +95,7 @@ class Time extends StatelessWidget {
                 width: 15,
               ),
               LimitedBox(
-                maxWidth: screenWidth / 3,
+                maxWidth: screenWidth < 600 ? screenWidth / 3 : 250,
                 child: Text(
                   fallenAsleep!,
                   style: TextStyle(
@@ -124,7 +119,7 @@ class Time extends StatelessWidget {
                 width: 15,
               ),
               LimitedBox(
-                maxWidth: screenWidth / 3,
+                maxWidth: screenWidth < 600 ? screenWidth / 3 : 250,
                 child: Text(
                   wokenUp!,
                   style: TextStyle(

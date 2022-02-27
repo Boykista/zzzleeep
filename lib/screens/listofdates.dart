@@ -153,91 +153,107 @@ class _SleepDatesState extends State<SleepDates>
                     wholeList.clear();
                     return SizedBox.expand(
                       child: Stack(
+                        alignment: Alignment.topCenter,
                         children: [
                           SlideTransition(
                             position: slide!,
-                            child: SizedBox.expand(
-                              child: SingleChildScrollView(
-                                child: Column(
-                                  children: [
-                                    ListView.builder(
-                                      reverse: true,
-                                      shrinkWrap: true,
-                                      physics:
-                                          const NeverScrollableScrollPhysics(),
-                                      itemBuilder:
-                                          (BuildContext context, int i) {
-                                        final sleepData = data.getAt(i) as List;
-                                        List<SleepData> sleepInputList =
-                                            List<SleepData>.from(sleepData);
-                                        wholeList.add(sleepInputList);
-                                        if (wholeList.length == data.length) {}
-                                        SleepData sleepInput =
-                                            SleepData(date: sleepData[0].date);
-                                        if (sleepInputList.length > 1) {
-                                          moreThanOneInput = true;
-                                          sleepInput =
-                                              SleepInput.hoursMinutesConverter(
-                                                  sleepdata: sleepInputList);
-                                          sleepInput.fallenAsleep =
-                                              SleepInput.fallenAsleepConverter(
-                                                  sleepData: sleepInputList);
-                                          sleepInput.wokenUp =
-                                              SleepInput.wokenUpConverter(
-                                                  sleepData: sleepInputList);
-                                        } else {
-                                          moreThanOneInput = false;
-                                        }
-                                        String date = SleepInput.dateConverter(
-                                            dateData: sleepInputList[0].date,
-                                            toHive: false);
-                                        return DelayedDisplay(
-                                          delay: Duration(
-                                              milliseconds: data.length <
-                                                      numberOfNonVisibleAnimation
-                                                  ? i * 450
-                                                  : i <
-                                                          data.length -
-                                                              numberOfNonVisibleAnimation
-                                                      ? 0
-                                                      : (i -
-                                                              (data.length -
-                                                                  numberOfNonVisibleAnimation) +
-                                                              1) *
-                                                          450),
-                                          slidingCurve: Curves.bounceOut,
-                                          child: Dates(
-                                            indigo: indigo,
-                                            fontSize: fontSize,
-                                            sleepInput: sleepInput,
-                                            sleepInputList: sleepInputList,
-                                            i: i,
-                                            date: date,
-                                            animationController2:
-                                                _animationController2,
-                                            scale2: scale2,
-                                            wholeList: wholeList,
-                                            animationController:
-                                                _animationController,
-                                            scale: scale,
-                                            moreThanOneInput: moreThanOneInput,
-                                          ),
-                                        );
-                                      },
-                                      itemCount: data.length,
-                                    ),
-                                    const SizedBox(
-                                      height: 50,
-                                    ),
-                                  ],
+                            child: Container(
+                              constraints: const BoxConstraints(maxWidth: 500),
+                              child: SizedBox.expand(
+                                child: SingleChildScrollView(
+                                  child: Column(
+                                    children: [
+                                      ListView.builder(
+                                        reverse: true,
+                                        shrinkWrap: true,
+                                        physics:
+                                            const NeverScrollableScrollPhysics(),
+                                        itemBuilder:
+                                            (BuildContext context, int i) {
+                                          final sleepData =
+                                              data.getAt(i) as List;
+                                          List<SleepData> sleepInputList =
+                                              List<SleepData>.from(sleepData);
+                                          wholeList.add(sleepInputList);
+                                          if (wholeList.length ==
+                                              data.length) {}
+                                          SleepData sleepInput = SleepData(
+                                              date: sleepData[0].date);
+                                          if (sleepInputList.length > 1) {
+                                            moreThanOneInput = true;
+                                            sleepInput = SleepInput
+                                                .hoursMinutesConverter(
+                                                    sleepdata: sleepInputList);
+                                            sleepInput.fallenAsleep = SleepInput
+                                                .fallenAsleepConverter(
+                                                    sleepData: sleepInputList);
+                                            sleepInput.wokenUp =
+                                                SleepInput.wokenUpConverter(
+                                                    sleepData: sleepInputList);
+                                          } else {
+                                            moreThanOneInput = false;
+                                          }
+                                          String date =
+                                              SleepInput.dateConverter(
+                                                  dateData:
+                                                      sleepInputList[0].date,
+                                                  toHive: false);
+                                          return DelayedDisplay(
+                                            delay: Duration(
+                                                milliseconds: data.length <
+                                                        numberOfNonVisibleAnimation
+                                                    ? i * 450
+                                                    : i <
+                                                            data.length -
+                                                                numberOfNonVisibleAnimation
+                                                        ? 0
+                                                        : (i -
+                                                                (data.length -
+                                                                    numberOfNonVisibleAnimation) +
+                                                                1) *
+                                                            450),
+                                            slidingCurve: Curves.bounceOut,
+                                            child: Dates(
+                                              indigo: indigo,
+                                              fontSize: fontSize,
+                                              sleepInput: sleepInput,
+                                              sleepInputList: sleepInputList,
+                                              i: i,
+                                              date: date,
+                                              animationController2:
+                                                  _animationController2,
+                                              scale2: scale2,
+                                              wholeList: wholeList,
+                                              animationController:
+                                                  _animationController,
+                                              scale: scale,
+                                              moreThanOneInput:
+                                                  moreThanOneInput,
+                                            ),
+                                          );
+                                        },
+                                        itemCount: data.length,
+                                      ),
+                                      const SizedBox(
+                                        height: 50,
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),
                           ),
-                          SizedBox.expand(
-                            child: ScaleTransition(
-                              scale: scale2!,
-                              child: const SetSleepTime(),
+                          Align(
+                            alignment: Alignment.center,
+                            child: Container(
+                              constraints: const BoxConstraints(
+                                  maxWidth: 600, maxHeight: 850),
+                              child: SizedBox.expand(
+                                child: ScaleTransition(
+                                  scale: scale2!,
+                                  child: const SetSleepTime(),
+                                ),
+                              ),
                             ),
                           ),
                           SlideTransition(
@@ -340,12 +356,12 @@ class _DatesState extends State<Dates> with TickerProviderStateMixin {
                             color: Colors.indigo,
                           ),
                           borderRadius: BorderRadius.circular(30))),
-                  Positioned(
-                    top: 55,
-                    width: screenWidth,
+                  Positioned.fill(
+                    top: 15,
+                    // width: screenWidth,
                     // left: screenWidth / 2 - 180,
                     child: Padding(
-                      padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+                      padding: const EdgeInsets.fromLTRB(30, 0, 30, 0),
                       child: ShowData(
                         fontSize: widget.fontSize!,
                         i: widget.i,
