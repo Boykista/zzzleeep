@@ -108,7 +108,7 @@ class _SetSleepTimeState extends State<SetSleepTime> {
                             ),
                             AnimatedContainer(
                               duration: const Duration(milliseconds: 800),
-                              curve: Curves.easeInOutQuart,
+                              curve: Curves.easeOutCirc,
                               constraints: BoxConstraints(
                                   maxHeight: focus
                                       ? screenHeight * 0.0
