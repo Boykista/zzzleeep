@@ -91,9 +91,6 @@ class _SleepDatesState extends State<SleepDates>
         .animate(CurvedAnimation(
             parent: _slideController!, curve: Curves.easeOutExpo));
 
-    // WidgetsBinding.instance!.addPostFrameCallback((_) {
-    //   SystemChrome.setSystemUIOverlayStyle(overlayStyle);
-    // });
     super.initState();
   }
 
@@ -105,15 +102,6 @@ class _SleepDatesState extends State<SleepDates>
       _animationController!.dispose();
       _animationController2!.dispose();
       _slideController!.dispose();
-      // overlayStyle;
-    } else if (state == AppLifecycleState.inactive) {
-      Hive.close();
-      // overlayStyle;
-    } else if (state == AppLifecycleState.paused) {
-      Hive.close();
-      //  overlayStyle;
-    } else if (state == AppLifecycleState.resumed) {
-      // overlayStyle;
     }
   }
 
