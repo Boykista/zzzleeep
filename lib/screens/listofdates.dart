@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:zzzleep/functions/sleepconverter.dart';
 import 'package:zzzleep/models/sleepinput.dart';
@@ -65,7 +66,6 @@ class _SleepDatesState extends State<SleepDates>
   @override
   void initState() {
     WidgetsBinding.instance!.addObserver(this);
-
     _animationController2 = AnimationController(
         animationBehavior: AnimationBehavior.preserve,
         vsync: this,
@@ -117,7 +117,6 @@ class _SleepDatesState extends State<SleepDates>
 
   @override
   Widget build(BuildContext context) {
-    //  SystemChrome.setSystemUIOverlayStyle(overlayStyle);
     double screenHeight = MediaQuery.of(context).size.height;
     numberOfNonVisibleAnimation = (screenHeight / 100).truncate();
     return FutureBuilder(
@@ -306,20 +305,8 @@ class Dates extends StatefulWidget {
 
 class _DatesState extends State<Dates> with TickerProviderStateMixin {
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    // animationController?.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
-    // double screenHeight = MediaQuery.of(context).size.height;
     var animationProvider = Provider.of<AnimationProvider>(context);
     var sleepDataProvider = Provider.of<SleepDataProvider>(context);
     var initialSleepDataProvider =
@@ -346,8 +333,6 @@ class _DatesState extends State<Dates> with TickerProviderStateMixin {
                           borderRadius: BorderRadius.circular(30))),
                   Positioned.fill(
                     top: 15,
-                    // width: screenWidth,
-                    // left: screenWidth / 2 - 180,
                     child: Padding(
                       padding: const EdgeInsets.fromLTRB(30, 0, 30, 0),
                       child: ShowData(
@@ -400,7 +385,6 @@ class _DatesState extends State<Dates> with TickerProviderStateMixin {
                               const Duration(milliseconds: 350));
                           widget.animationController2!.forward();
                           sleepDataProvider.secondScreen(true);
-                          // animationProvider.backPressed(false);
                           await Future.delayed(
                               const Duration(milliseconds: 850));
                           Hive.close();
@@ -505,6 +489,19 @@ class _BottomNavigationBarStackState extends State<BottomNavigationBarStack> {
             );
     } else {
       var animationProvider = Provider.of<AnimationProvider>(context);
+      if (chartShown) {
+        SystemChrome.setPreferredOrientations([
+          DeviceOrientation.landscapeRight,
+          DeviceOrientation.landscapeLeft,
+          DeviceOrientation.portraitUp,
+          DeviceOrientation.portraitDown,
+        ]);
+      } else {
+        SystemChrome.setPreferredOrientations([
+          DeviceOrientation.portraitUp,
+          DeviceOrientation.portraitDown,
+        ]);
+      }
       return AnimatedContainer(
         duration: const Duration(seconds: 1),
         width: MediaQuery.of(context).size.width,
