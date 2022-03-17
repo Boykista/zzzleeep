@@ -119,7 +119,7 @@ class _SleepDatesState extends State<SleepDates>
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
-    numberOfNonVisibleAnimation = (screenHeight / 100).truncate();
+    numberOfNonVisibleAnimation = ((screenHeight / 100).truncate() - 2);
     return FutureBuilder(
         future: Hive.openBox('sleepdata'),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
