@@ -19,8 +19,6 @@ void main() async {
   await Future.delayed(const Duration(seconds: 1));
   await SimplePreferences.init();
   await SystemChrome.setPreferredOrientations([
-    // DeviceOrientation.landscapeRight,
-    // DeviceOrientation.landscapeLeft,
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
