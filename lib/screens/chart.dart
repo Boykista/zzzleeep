@@ -167,7 +167,7 @@ class TooltipAppearence extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
         padding: const EdgeInsets.all(8),
-        height: 77,
+        height: 78,
         width: 145,
         child: Column(
           children: [
@@ -206,7 +206,7 @@ class Average extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 200,
+      width: 205,
       padding: const EdgeInsets.fromLTRB(5, 0, 0, 0),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(22),
