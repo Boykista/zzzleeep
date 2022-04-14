@@ -10,12 +10,12 @@ import 'package:hive_flutter/hive_flutter.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Hive.initFlutter();
-  Hive.registerAdapter(SleepDataAdapter());
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
     systemNavigationBarColor: Colors.indigo[900],
     systemNavigationBarIconBrightness: Brightness.dark,
   ));
+  await Hive.initFlutter();
+  Hive.registerAdapter(SleepDataAdapter());
   await Future.delayed(const Duration(seconds: 1));
   await SimplePreferences.init();
   await SystemChrome.setPreferredOrientations([
@@ -39,6 +39,7 @@ void main() async {
         systemNavigationBarIconBrightness: Brightness.light,
       ),
       child: MaterialApp(
+        debugShowCheckedModeBanner: false,
         themeMode: ThemeMode.light,
         theme: ThemeData(
           brightness: Brightness.light,
