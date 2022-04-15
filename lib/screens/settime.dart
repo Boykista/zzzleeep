@@ -64,158 +64,164 @@ class _SetSleepTimeState extends State<SetSleepTime> {
     double screenHeight = MediaQuery.of(context).size.height;
 
     return sleepDataProvider.getSleepDataList.isNotEmpty
-        ? Scaffold(
-            extendBody: true,
-            backgroundColor: Colors.transparent,
-            body: Stack(
-              children: [
-                SafeArea(
-                  child: Container(
-                    alignment: Alignment.center,
-                    margin: EdgeInsets.fromLTRB(
-                        10, 40, 10, animationProvider.getFocus ? 20 : 90),
-                    decoration: BoxDecoration(
-                        color: indigo?.withOpacity(0.5),
-                        border: Border.all(
-                          color: Colors.indigo,
-                        ),
-                        borderRadius: BorderRadius.circular(30)),
-                    child: Stack(
-                      clipBehavior: Clip.none,
+        ? GestureDetector(
+            onTap: () => FocusScope.of(context).unfocus(),
+            child: Scaffold(
+              extendBody: true,
+              backgroundColor: Colors.transparent,
+              body: Stack(
+                children: [
+                  SafeArea(
+                    child: Container(
                       alignment: Alignment.center,
-                      children: [
-                        Positioned(
-                          top: -20,
-                          width: 160,
-                          child: Container(
-                            padding: const EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(10)),
-                            child: Text(
-                              date,
-                              style: TextStyle(
-                                  fontSize: fontSize + 3,
-                                  color: Colors.indigo[900]),
-                              textAlign: TextAlign.center,
+                      margin: EdgeInsets.fromLTRB(
+                          10, 40, 10, animationProvider.getFocus ? 20 : 90),
+                      decoration: BoxDecoration(
+                          color: indigo?.withOpacity(0.5),
+                          border: Border.all(
+                            color: Colors.indigo,
+                          ),
+                          borderRadius: BorderRadius.circular(30)),
+                      child: Stack(
+                        clipBehavior: Clip.none,
+                        alignment: Alignment.center,
+                        children: [
+                          Positioned(
+                            top: -20,
+                            width: 160,
+                            child: Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(10)),
+                              child: Text(
+                                date,
+                                style: TextStyle(
+                                    fontSize: fontSize + 3,
+                                    color: Colors.indigo[900]),
+                                textAlign: TextAlign.center,
+                              ),
                             ),
                           ),
-                        ),
-                        Column(
-                          children: [
-                            const SizedBox(
-                              height: 30,
-                            ),
-                            AnimatedContainer(
-                              duration: const Duration(milliseconds: 800),
-                              curve: Curves.easeOutCirc,
-                              constraints: BoxConstraints(
-                                  maxHeight: focus
-                                      ? screenHeight * 0.0
-                                      : screenHeight > 1000
-                                          ? 600
-                                          : screenHeight * 0.5),
-                              child: SingleChildScrollView(
-                                child: ListView.builder(
-                                    shrinkWrap: true,
-                                    physics:
-                                        const NeverScrollableScrollPhysics(),
-                                    itemCount: sleepDataProvider
-                                        .getSleepDataList.length,
-                                    itemBuilder: (BuildContext context, int i) {
-                                      SleepData sleepData =
-                                          sleepDataProvider.getSleepDataList[i];
-                                      return Column(
-                                        children: [
-                                          i > 0
-                                              ? Stack(
-                                                  alignment: Alignment.center,
-                                                  children: [
-                                                    const Divider(
-                                                      color: Colors.indigo,
-                                                      thickness: 1.5,
-                                                    ),
-                                                    IconButton(
-                                                        onPressed: () {
-                                                          sleepDataProvider
-                                                              .dereaseSleepDataList(
-                                                                  i: i);
-                                                        },
-                                                        icon: const Icon(
-                                                          Icons.remove_circle,
-                                                          color: Colors.white,
-                                                          size: 30,
-                                                        ))
-                                                  ],
-                                                )
-                                              : const SizedBox(),
-                                          ShowData(
-                                            sleepData: sleepData,
-                                            fontSize: fontSize,
-                                            list: false,
-                                            i: i,
-                                          ),
-                                        ],
-                                      );
-                                    }),
+                          Column(
+                            children: [
+                              const SizedBox(
+                                height: 30,
                               ),
-                            ),
-                            const SizedBox(
-                              height: 5,
-                            ),
-                            Text(
-                              'Notes/Dreams...',
-                              style: TextStyle(
-                                fontSize: fontSize,
-                                color: Colors.white,
+                              AnimatedContainer(
+                                duration: const Duration(milliseconds: 800),
+                                curve: Curves.easeOutCirc,
+                                constraints: BoxConstraints(
+                                    maxHeight: focus
+                                        ? screenHeight * 0.0
+                                        : screenHeight > 1000
+                                            ? 600
+                                            : screenHeight * 0.5),
+                                child: SingleChildScrollView(
+                                  child: ListView.builder(
+                                      shrinkWrap: true,
+                                      physics:
+                                          const NeverScrollableScrollPhysics(),
+                                      itemCount: sleepDataProvider
+                                          .getSleepDataList.length,
+                                      itemBuilder:
+                                          (BuildContext context, int i) {
+                                        SleepData sleepData = sleepDataProvider
+                                            .getSleepDataList[i];
+                                        return Column(
+                                          children: [
+                                            i > 0
+                                                ? Stack(
+                                                    alignment: Alignment.center,
+                                                    children: [
+                                                      const Divider(
+                                                        color: Colors.indigo,
+                                                        thickness: 1.5,
+                                                      ),
+                                                      IconButton(
+                                                          onPressed: () {
+                                                            sleepDataProvider
+                                                                .dereaseSleepDataList(
+                                                                    i: i);
+                                                          },
+                                                          icon: const Icon(
+                                                            Icons.remove_circle,
+                                                            color: Colors.white,
+                                                            size: 30,
+                                                          ))
+                                                    ],
+                                                  )
+                                                : const SizedBox(),
+                                            ShowData(
+                                              sleepData: sleepData,
+                                              fontSize: fontSize,
+                                              list: false,
+                                              i: i,
+                                            ),
+                                          ],
+                                        );
+                                      }),
+                                ),
                               ),
-                              textAlign: TextAlign.center,
-                            ),
-                            Expanded(
-                              child: Padding(
-                                  padding:
-                                      const EdgeInsets.fromLTRB(15, 10, 15, 10),
-                                  child: TextField(
-                                    autofocus: false,
-                                    controller:
-                                        sleepDataProvider.getNotesController,
-                                    textInputAction: TextInputAction.newline,
-                                    maxLines: 20,
-                                    onTap: () {},
-                                    style: TextStyle(
-                                        fontSize: fontSize,
-                                        color: Colors.white),
-                                    decoration: InputDecoration(
-                                      isDense: false,
-                                      contentPadding: const EdgeInsets.fromLTRB(
-                                          8, 15, 8, 15),
-                                      labelStyle: TextStyle(
-                                          fontSize: fontSize + 4,
-                                          color: Colors.indigo),
-                                      enabledBorder: OutlineInputBorder(
-                                          borderSide: const BorderSide(
-                                              color: Colors.white),
-                                          borderRadius:
-                                              BorderRadius.circular(20)),
-                                      focusedBorder: OutlineInputBorder(
-                                          borderSide: const BorderSide(
-                                            color: Colors.white,
-                                          ),
-                                          borderRadius:
-                                              BorderRadius.circular(20)),
-                                    ),
-                                    onChanged: (value) {
-                                      sleepDataProvider.setNotes(notes: value);
-                                    },
-                                  )),
-                            ),
-                          ],
-                        ),
-                      ],
+                              const SizedBox(
+                                height: 5,
+                              ),
+                              Text(
+                                'Notes/Dreams...',
+                                style: TextStyle(
+                                  fontSize: fontSize,
+                                  color: Colors.white,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                              Expanded(
+                                child: Padding(
+                                    padding: const EdgeInsets.fromLTRB(
+                                        15, 10, 15, 10),
+                                    child: TextField(
+                                      autofocus: false,
+                                      controller:
+                                          sleepDataProvider.getNotesController,
+                                      textInputAction: TextInputAction.newline,
+                                      maxLines: 20,
+                                      onTap: () {},
+                                      style: TextStyle(
+                                          fontSize: fontSize,
+                                          color: Colors.white),
+                                      decoration: InputDecoration(
+                                        isDense: false,
+                                        contentPadding:
+                                            const EdgeInsets.fromLTRB(
+                                                8, 15, 8, 15),
+                                        labelStyle: TextStyle(
+                                            fontSize: fontSize + 4,
+                                            color: Colors.indigo),
+                                        enabledBorder: OutlineInputBorder(
+                                            borderSide: const BorderSide(
+                                                color: Colors.white),
+                                            borderRadius:
+                                                BorderRadius.circular(20)),
+                                        focusedBorder: OutlineInputBorder(
+                                            borderSide: const BorderSide(
+                                              color: Colors.white,
+                                            ),
+                                            borderRadius:
+                                                BorderRadius.circular(20)),
+                                      ),
+                                      onChanged: (value) {
+                                        sleepDataProvider.setNotes(
+                                            notes: value);
+                                      },
+                                    )),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           )
         : const SizedBox();
