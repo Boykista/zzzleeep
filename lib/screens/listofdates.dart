@@ -103,6 +103,8 @@ class _SleepDatesState extends State<SleepDates>
       _animationController!.dispose();
       _animationController2!.dispose();
       _slideController!.dispose();
+    } else if (state == AppLifecycleState.resumed) {
+      setState(() {});
     }
   }
 
