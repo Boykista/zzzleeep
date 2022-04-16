@@ -96,15 +96,17 @@ class _SleepDatesState extends State<SleepDates>
   }
 
   @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
+  void didChangeAppLifecycleState(AppLifecycleState state) async {
     super.didChangeAppLifecycleState(state);
     if (state == AppLifecycleState.detached) {
-      Hive.close();
+      await Hive.close();
       _animationController!.dispose();
       _animationController2!.dispose();
       _slideController!.dispose();
     } else if (state == AppLifecycleState.resumed) {
       setState(() {});
+    } else if (state == AppLifecycleState.paused) {
+      await Hive.close();
     }
   }
 
