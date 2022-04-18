@@ -11,4 +11,10 @@ class SimplePreferences {
   }
 
   static int getCounter() => _preferences.getInt('counter') ?? 0;
+
+  static Future lastDate({String? lastDate}) async {
+    await _preferences.setString('lastDate', lastDate!);
+  }
+
+  static String getLastDate() => _preferences.getString('lastDate')!;
 }

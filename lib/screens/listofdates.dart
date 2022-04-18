@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:zzzleep/features/sharedpreferences.dart';
 import 'package:zzzleep/functions/sleepconverter.dart';
 import 'package:zzzleep/models/sleepinput.dart';
 import 'package:zzzleep/parts/sleepfields.dart';
@@ -104,7 +106,15 @@ class _SleepDatesState extends State<SleepDates>
       _animationController2!.dispose();
       _slideController!.dispose();
     } else if (state == AppLifecycleState.resumed) {
-      setState(() {});
+      String last = SimplePreferences.getLastDate();
+      DateFormat dateFormat = DateFormat('yyyy-MM-dd');
+      DateTime lastDate = dateFormat.parse(last);
+      DateTime today = dateFormat.parse(dateFormat.format(DateTime.now()));
+      if (lastDate.isBefore(today)) {
+        setState(() {});
+      } else {
+        await Hive.openBox('sleepdata');
+      }
     } else if (state == AppLifecycleState.paused) {
       await Hive.close();
     }
@@ -167,8 +177,6 @@ class _SleepDatesState extends State<SleepDates>
                                           List<SleepData> sleepInputList =
                                               List<SleepData>.from(sleepData);
                                           wholeList.add(sleepInputList);
-                                          if (wholeList.length ==
-                                              data.length) {}
                                           SleepData sleepInput = SleepData(
                                               date: sleepData[0].date);
                                           if (sleepInputList.length > 1) {
@@ -185,11 +193,17 @@ class _SleepDatesState extends State<SleepDates>
                                           } else {
                                             moreThanOneInput = false;
                                           }
+
                                           String date =
                                               SleepInput.dateConverter(
                                                   dateData:
                                                       sleepInputList[0].date,
                                                   toHive: false);
+                                          if (i == data.length - 1) {
+                                            SimplePreferences.lastDate(
+                                                lastDate:
+                                                    sleepInputList[0].keyDate);
+                                          }
                                           return DelayedDisplay(
                                             delay: Duration(
                                                 milliseconds: data.length <
