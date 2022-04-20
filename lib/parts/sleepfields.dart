@@ -95,7 +95,7 @@ class Time extends StatelessWidget {
                 width: 15,
               ),
               LimitedBox(
-                maxWidth: screenWidth < 600 ? screenWidth / 3 : 250,
+                maxWidth: screenWidth < 600 ? screenWidth / 2.5 : 300,
                 child: Text(
                   fallenAsleep!,
                   style: TextStyle(
@@ -119,7 +119,7 @@ class Time extends StatelessWidget {
                 width: 15,
               ),
               LimitedBox(
-                maxWidth: screenWidth < 600 ? screenWidth / 3 : 250,
+                maxWidth: screenWidth < 600 ? screenWidth / 2.5 : 300,
                 child: Text(
                   wokenUp!,
                   style: TextStyle(

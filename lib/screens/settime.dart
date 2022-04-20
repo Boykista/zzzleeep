@@ -21,21 +21,26 @@ bool moreThanOneInput = false;
 
 class _SetSleepTimeState extends State<SetSleepTime> {
   bool focus = false;
+  bool focusRaw = false;
   late StreamSubscription<bool> keyboardSubscription;
   @override
   void initState() {
     super.initState();
+
     var animationProvider =
         Provider.of<AnimationProvider>(context, listen: false);
     var keyboardVisibilityController = KeyboardVisibilityController();
     keyboardSubscription =
         keyboardVisibilityController.onChange.listen((bool visible) async {
-      setState(() {
-        keyboardVisibilityController.isVisible ? focus = true : focus = false;
-      });
-      if (!focus) {
+      if (keyboardVisibilityController.isVisible) {
+        focus = true;
+        focusRaw = true;
+      } else {
         await Future.delayed(const Duration(milliseconds: 50));
+        focus = false;
+        focusRaw = false;
       }
+
       animationProvider.setFocus(focus);
     });
   }
@@ -62,7 +67,6 @@ class _SetSleepTimeState extends State<SetSleepTime> {
     }
     sleepDataProvider.getChooseTimeButton ? focus = false : focus = focus;
     double screenHeight = MediaQuery.of(context).size.height;
-
     return sleepDataProvider.getSleepDataList.isNotEmpty
         ? GestureDetector(
             onTap: () => FocusScope.of(context).unfocus(),
@@ -114,8 +118,10 @@ class _SetSleepTimeState extends State<SetSleepTime> {
                                 constraints: BoxConstraints(
                                     maxHeight: focus
                                         ? screenHeight * 0.0
-                                        : screenHeight > 1000
-                                            ? 600
+                                        // : screenHeight > 1000
+                                        //     ? 600
+                                        : focusRaw
+                                            ? screenHeight * 0.2
                                             : screenHeight * 0.5),
                                 child: SingleChildScrollView(
                                   child: ListView.builder(

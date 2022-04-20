@@ -482,6 +482,7 @@ class _BottomNavigationBarStackState extends State<BottomNavigationBarStack> {
               duration: const Duration(seconds: 1),
               width: MediaQuery.of(context).size.width,
               height: animationProvider.getHeight,
+              constraints: const BoxConstraints(maxWidth: 600),
               child: Row(
                 children: [
                   Expanded(
@@ -525,6 +526,7 @@ class _BottomNavigationBarStackState extends State<BottomNavigationBarStack> {
         duration: const Duration(seconds: 1),
         width: MediaQuery.of(context).size.width,
         height: 75 - animationProvider.getHeight,
+        constraints: const BoxConstraints(maxWidth: 600),
         child: WillPopScope(
           onWillPop: () async {
             if (chartShown) {
@@ -574,8 +576,12 @@ class _BottomNavigationBarStackState extends State<BottomNavigationBarStack> {
             bottomNavigationBar: BottomAppBar(
               elevation: 0,
               notchMargin: 6,
-              color: Colors.indigo[900]!.withOpacity(0.85),
-              child: const SizedBox(height: 50),
+              color: MediaQuery.of(context).size.width > 600
+                  ? Colors.transparent
+                  : Colors.indigo[900]!.withOpacity(0.85),
+              child: const SizedBox(
+                height: 50,
+              ),
               shape: const CircularNotchedRectangle(),
             ),
           ),
@@ -687,8 +693,12 @@ class _BottomAppBarItemState extends State<BottomAppBarItem> {
         bottomNavigationBar: BottomAppBar(
           elevation: 0,
           notchMargin: 6,
-          color: Colors.indigo[900]!.withOpacity(0.85),
-          child: const SizedBox(height: 50),
+          color: MediaQuery.of(context).size.width > 600
+              ? Colors.transparent
+              : Colors.indigo[900]!.withOpacity(0.85),
+          child: const SizedBox(
+            height: 50,
+          ),
           shape: const CircularNotchedRectangle(),
         ),
       ),
