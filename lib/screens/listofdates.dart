@@ -30,11 +30,9 @@ class ListOfDates extends StatelessWidget {
                   image: DecorationImage(
                       image: AssetImage('images/night.jpg'),
                       fit: BoxFit.cover))),
-          SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.only(top: 15.0),
-              child: SleepDates(indigo: indigo, fontSize: fontSize),
-            ),
+          Padding(
+            padding: const EdgeInsets.only(top: 15.0),
+            child: SleepDates(indigo: indigo, fontSize: fontSize),
           ),
         ],
       ),
@@ -635,6 +633,7 @@ class _BottomAppBarItemState extends State<BottomAppBarItem> {
           elevation: 0.0,
           backgroundColor: Colors.indigo[900]!.withOpacity(0.85),
           onPressed: () async {
+            print('AAAAAAAa');
             var initialSleepData =
                 Provider.of<InitialSleepData>(context, listen: false);
             if (widget.i == 0) {
