@@ -31,6 +31,7 @@ class ListOfDates extends StatelessWidget {
                       image: AssetImage('images/night.jpg'),
                       fit: BoxFit.cover))),
           SafeArea(
+            bottom: false,
             child: Padding(
               padding: const EdgeInsets.only(top: 15.0),
               child: SleepDates(indigo: indigo, fontSize: fontSize),
